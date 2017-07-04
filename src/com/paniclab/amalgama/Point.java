@@ -1,12 +1,25 @@
 package com.paniclab.amalgama;
 
 import java.math.BigDecimal;
+import java.util.Objects;
+
+import static com.paniclab.amalgama.Util.isNot;
 
 /**
  * Created by Сергей on 04.07.2017.
  */
 public class Point implements Valuable<BigDecimal>, Comparable<Point> {
+
+    public static final Point POSITIVE_INFINITY = new Point(INFINITY.POSITIVE);
+    public static final Point NEGATIVE_INFINITY = new Point(INFINITY.NEGATIVE);
+
     private BigDecimal value;
+    private INFINITY infinityFlag = null;
+
+    private Point(INFINITY status) {
+        this.value = BigDecimal.ZERO;
+        this.infinityFlag = status;
+    }
 
     private Point(String str) {
         value = new BigDecimal(str);
@@ -16,15 +29,15 @@ public class Point implements Valuable<BigDecimal>, Comparable<Point> {
         this.value = val;
     }
 
-    public static Point newInstance(String str) {
+    public static Point valueOf(String str) {
         return new Point(str);
     }
 
-    public static Point newInstance(Number number) {
+    public static Point valueOf(Number number) {
         return new Point(number.toString());
     }
 
-    public static Point newInstance(BigDecimal bd) {
+    public static Point valueOf(BigDecimal bd) {
         return new Point(bd);
     }
 
@@ -32,6 +45,18 @@ public class Point implements Valuable<BigDecimal>, Comparable<Point> {
     @Override
     public BigDecimal value() {
         return value;
+    }
+
+    public boolean isInfinity() {
+        return infinityFlag != null;
+    }
+
+    public boolean isNegativeInfinity() {
+        return this.infinityFlag == INFINITY.NEGATIVE;
+    }
+
+    public boolean isPositiveInfinity() {
+        return this.infinityFlag == INFINITY.POSITIVE;
     }
 
     public boolean lessThen(Point other) {
@@ -44,21 +69,34 @@ public class Point implements Valuable<BigDecimal>, Comparable<Point> {
 
     @Override
     public int hashCode() {
-        return value().hashCode();
+        return Objects.hash(value().hashCode(), infinityFlag);
     }
 
     @Override
     public boolean equals(Object obj) {
         if(obj == null) return false;
         if(this == obj) return true;
-        if(!(this.hashCode() == obj.hashCode())) return false;
-        if(!(getClass().equals(obj.getClass()))) return false;
+        if(isNot(this.hashCode() == obj.hashCode())) return false;
+        if(isNot(getClass().equals(obj.getClass()))) return false;
         Point other = (Point) obj;
+        if(this.isInfinity() || other.isInfinity()) return this == other;
         return value().equals(other.value());
     }
 
+
     @Override
     public int compareTo(Point other) {
+        if(this == other) return 0;
+        if(this.isInfinity()) {
+            return this.isPositiveInfinity() ? 1 : -1;
+        }
+        if(other.isInfinity()) {
+            return other.isPositiveInfinity() ? -1 : 1;
+        }
         return value().compareTo(other.value());
+    }
+
+    private enum INFINITY {
+        POSITIVE, NEGATIVE
     }
 }
