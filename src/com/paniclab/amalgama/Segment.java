@@ -1,5 +1,6 @@
 package com.paniclab.amalgama;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 import static com.paniclab.amalgama.Util.isNot;
@@ -19,6 +20,8 @@ public class Segment {
 
     private Segment(Point one, Point another) {
         if(one == null || another == null) throw new NullPointerException();
+        if(one.equals(another) && another.isInfinity()) throw new WrongSegmentException("Ошибка при создании отрезка. " +
+                "Обе точки отрезка равны минус или плюс бесконечность");
 
         if(one.compareTo(another) < 0) {
             this.lesserLimit = one;
@@ -39,18 +42,37 @@ public class Segment {
     }
 
 
-    public boolean isZeroLengthSegment() {
+    public boolean hasZeroLength() {
         return lesserLimit.compareTo(largerLimit) == 0;
     }
 
-    public Point lesserLimit() {
-        return lesserLimit;
+    public boolean hasInfiniteLength() {
+        return lesserLimit() == Point.NEGATIVE_INFINITY &&
+                largerLimit() == Point.POSITIVE_INFINITY;
     }
 
-    public Point largerLimit() {
-        return largerLimit;
+    public boolean isHalfRange() {
+        if(this.hasInfiniteLength()) return false;
+        return lesserLimit().isInfinity() || largerLimit().isInfinity();
     }
 
+    public boolean isNegativeHalfRange() {
+        return this.isHalfRange() && this.lesserLimit().isInfinity();
+    }
+
+    public boolean isPositiveHalfRange() {
+        return this.isHalfRange() && this.largerLimit().isInfinity();
+    }
+
+    //TODO
+    public boolean isBiggerThen(Segment other) {
+        return this.length().compareTo(other.length()) > 0;
+    }
+
+    //TODO
+    public boolean isSmallerThen(Segment other) {
+        return this.length().compareTo(other.length()) < 0;
+    }
 
     public boolean isSubsegmentOf(Segment other) {
         if(this.lesserLimit().lessThen(other.lesserLimit())) return false;
@@ -63,6 +85,22 @@ public class Segment {
     public boolean hasCommonBorderWith(Segment other) {
         return this.getPoints().contains(other.lesserLimit()) ||
                 this.getPoints().contains(other.largerLimit());
+    }
+
+
+    public Point lesserLimit() {
+        return lesserLimit;
+    }
+
+    public Point largerLimit() {
+        return largerLimit;
+    }
+
+    private BigDecimal length() {
+        if(this.hasInfiniteLength() || this.isHalfRange()) throw new WrongSegmentException("Ошибка при попытке " +
+                "определения длины бесконечного отрезка или полуинтервала");
+
+        return largerLimit().value().subtract(lesserLimit().value());
     }
 
 
