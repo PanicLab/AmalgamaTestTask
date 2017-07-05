@@ -14,13 +14,13 @@ import static com.paniclab.amalgama.Util.isNot;
  * В случае отрезка нулевой длины метод возвращает Set, состоящий из одного экземпляра класса Point.
  * Экземпляры класса неизменяемы и безопасны в многопоточной среде.
  */
-public class Segment {
+public class Interval {
     private Point lesserLimit;
     private Point largerLimit;
 
-    private Segment(Point one, Point another) {
+    private Interval(Point one, Point another) {
         if(one == null || another == null) throw new NullPointerException();
-        if(one.equals(another) && another.isInfinity()) throw new WrongSegmentException("Ошибка при создании отрезка. " +
+        if(one.equals(another) && another.isInfinity()) throw new IntervalException("Ошибка при создании отрезка. " +
                 "Обе точки отрезка равны минус или плюс бесконечность");
 
         if(one.compareTo(another) < 0) {
@@ -37,8 +37,8 @@ public class Segment {
         }
     }
 
-    public static Segment newInstance(Point one, Point another) {
-        return new Segment(one, another);
+    public static Interval newInstance(Point one, Point another) {
+        return new Interval(one, another);
     }
 
 
@@ -51,30 +51,30 @@ public class Segment {
                 largerLimit() == Point.POSITIVE_INFINITY;
     }
 
-    public boolean isHalfRange() {
+    public boolean isHalfInterval() {
         if(this.hasInfiniteLength()) return false;
         return lesserLimit().isInfinity() || largerLimit().isInfinity();
     }
 
-    public boolean isNegativeHalfRange() {
-        return this.isHalfRange() && this.lesserLimit().isInfinity();
+    public boolean isNegativeHalfInterval() {
+        return this.isHalfInterval() && this.lesserLimit().isInfinity();
     }
 
-    public boolean isPositiveHalfRange() {
-        return this.isHalfRange() && this.largerLimit().isInfinity();
+    public boolean isPositiveHalfInterval() {
+        return this.isHalfInterval() && this.largerLimit().isInfinity();
     }
 
     //TODO
-    public boolean isBiggerThen(Segment other) {
+    public boolean isBiggerThen(Interval other) {
         return this.length().compareTo(other.length()) > 0;
     }
 
     //TODO
-    public boolean isSmallerThen(Segment other) {
+    public boolean isSmallerThen(Interval other) {
         return this.length().compareTo(other.length()) < 0;
     }
 
-    public boolean isSubsegmentOf(Segment other) {
+    public boolean isSubintervalOf(Interval other) {
         if(this.lesserLimit().lessThen(other.lesserLimit())) return false;
         if(this.lesserLimit().moreThen(other.largerLimit())) return false;
         if(this.largerLimit().lessThen(other.lesserLimit())) return false;
@@ -82,7 +82,7 @@ public class Segment {
         return true;
     }
 
-    public boolean hasCommonBorderWith(Segment other) {
+    public boolean hasCommonBorderWith(Interval other) {
         return this.getPoints().contains(other.lesserLimit()) ||
                 this.getPoints().contains(other.largerLimit());
     }
@@ -97,7 +97,7 @@ public class Segment {
     }
 
     private BigDecimal length() {
-        if(this.hasInfiniteLength() || this.isHalfRange()) throw new WrongSegmentException("Ошибка при попытке " +
+        if(this.hasInfiniteLength() || this.isHalfInterval()) throw new IntervalException("Ошибка при попытке " +
                 "определения длины бесконечного отрезка или полуинтервала");
 
         return largerLimit().value().subtract(lesserLimit().value());
@@ -124,7 +124,7 @@ public class Segment {
         if(this.hashCode() != obj.hashCode()) return false;
         if(isNot(this.getClass().equals(obj.getClass()))) return false;
 
-        Segment other = (Segment) obj;
+        Interval other = (Interval) obj;
         return this.largerLimit.equals(other.largerLimit) &&
                 this.lesserLimit.equals(other.lesserLimit);
     }

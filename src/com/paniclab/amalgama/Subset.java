@@ -7,18 +7,18 @@ import java.util.Set;
  * Created by Сергей on 04.07.2017.
  */
 public class Subset {
-    private Set<Segment> segmentSet;
+    private Set<Interval> intervalSet;
     private Set<Point> pointSet;
 
     private Subset(Builder builder) {
-        this.segmentSet = builder.segments;
+        this.intervalSet = builder.intervals;
         this.pointSet = createPointSet();
     }
 
     private Set<Point> createPointSet() {
         Set<Point> points = new HashSet<>(getSegments().size()*2 + 1, 1.0f);
-        for (Segment segment: getSegments()) {
-            points.addAll(segment.getPoints());
+        for (Interval interval : getSegments()) {
+            points.addAll(interval.getPoints());
         }
         return points;
     }
@@ -28,8 +28,8 @@ public class Subset {
     }
 
 
-    public Set<Segment> getSegments() {
-        return segmentSet;
+    public Set<Interval> getSegments() {
+        return intervalSet;
     }
 
 
@@ -38,18 +38,18 @@ public class Subset {
     }
 
     public int size() {
-        return segmentSet.size();
+        return intervalSet.size();
     }
 
     public static class Builder {
-        private Set<Segment> segments;
+        private Set<Interval> intervals;
 
         private Builder() {
-            this.segments = new HashSet<>();
+            this.intervals = new HashSet<>();
         }
 
-        public Builder addSegment(Segment segment) {
-            segments.add(segment);
+        public Builder addSegment(Interval interval) {
+            intervals.add(interval);
             return this;
         }
 
