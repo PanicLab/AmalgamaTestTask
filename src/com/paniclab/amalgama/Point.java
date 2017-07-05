@@ -12,6 +12,7 @@ public class Point implements Valuable<BigDecimal>, Comparable<Point> {
 
     public static final Point POSITIVE_INFINITY = new Point(INFINITY.POSITIVE);
     public static final Point NEGATIVE_INFINITY = new Point(INFINITY.NEGATIVE);
+    public static final Point ZERO = valueOf(0);
 
     private BigDecimal value;
     private INFINITY infinityFlag = null;
@@ -28,6 +29,7 @@ public class Point implements Valuable<BigDecimal>, Comparable<Point> {
     private Point(BigDecimal val) {
         this.value = val;
     }
+
 
     public static Point valueOf(String str) {
         return new Point(str);
@@ -47,30 +49,55 @@ public class Point implements Valuable<BigDecimal>, Comparable<Point> {
         return value;
     }
 
+
+    //TODO тесты
+    public BigDecimal absValue() {
+        return this.value().abs();
+    }
+
+
     public boolean isInfinity() {
         return infinityFlag != null;
     }
+
 
     public boolean isNegativeInfinity() {
         return this.infinityFlag == INFINITY.NEGATIVE;
     }
 
+
     public boolean isPositiveInfinity() {
         return this.infinityFlag == INFINITY.POSITIVE;
     }
+
 
     public boolean lessThen(Point other) {
         return this.compareTo(other) < 0;
     }
 
+
+    //TODO тесты
+    public boolean lessThenOrEquals(Point other) {
+        return this.compareTo(other) <= 0;
+    }
+
+
     public boolean moreThen(Point other) {
         return this.compareTo(other) > 0;
     }
+
+
+    //TODO тесты
+    public boolean moreThenOrEquals(Point other) {
+        return this.compareTo(other) >= 0;
+    }
+
 
     @Override
     public int hashCode() {
         return Objects.hash(value().hashCode(), infinityFlag);
     }
+
 
     @Override
     public boolean equals(Object obj) {
@@ -95,6 +122,7 @@ public class Point implements Valuable<BigDecimal>, Comparable<Point> {
         }
         return value().compareTo(other.value());
     }
+
 
     private enum INFINITY {
         POSITIVE, NEGATIVE

@@ -95,4 +95,82 @@ public class IntervalTest {
         Interval interval = Interval.newInstance(x, y);
         assertFalse(interval.hasZeroLength());
     }
+
+    @Test
+    public void isHalfInterval_takesPosInfinityAndRandomArg_returnTrue() throws Exception {
+        Point x = Point.POSITIVE_INFINITY;
+        Point y = Point.valueOf(-10);
+        Interval interval = Interval.newInstance(x, y);
+        assertTrue(interval.isHalfInterval());
+    }
+
+    @Test
+    public void isHalfInterval_takesNegInfinityAndRandomArg_returnTrue() throws Exception {
+        Point x = Point.valueOf("5326");
+        Point y = Point.NEGATIVE_INFINITY;
+        Interval interval = Interval.newInstance(x, y);
+        assertTrue(interval.isHalfInterval());
+    }
+
+    @Test
+    public void isHalfInterval_takesBothNotEqualsRandomArgs_returnFalse() throws Exception {
+        Point x = Point.valueOf("4");
+        Point y = Point.valueOf(6);
+        Interval interval = Interval.newInstance(x, y);
+        assertFalse(interval.isHalfInterval());
+    }
+
+    @Test
+    public void isHalfInterval_takesBothEqualsRandomArgs_returnFalse() throws Exception {
+        Point x = Point.valueOf(BigDecimal.ZERO);
+        Interval interval = Interval.newInstance(x, x);
+        assertFalse(interval.isHalfInterval());
+    }
+
+    @Test
+    public void isHalfInterval_takesPosInfinityAndNegInfinity_returnFalse() throws Exception {
+        Point x = Point.POSITIVE_INFINITY;
+        Point y = Point.NEGATIVE_INFINITY;
+        Interval interval = Interval.newInstance(x, y);
+        assertFalse(interval.isHalfInterval());
+    }
+
+    @Test
+    public void isNegativeHalfInterval_takesPosInfinityAndRandomArg_returnFalse() throws Exception {
+        Point x = Point.POSITIVE_INFINITY;
+        Point y = Point.valueOf(11);
+        Interval interval = Interval.newInstance(x,y);
+        //assertTrue(interval.isHalfInterval());
+
+        assertFalse(interval.isNegativeHalfInterval());
+    }
+
+    @Test
+    public void isNegativeHalfInterval_takesNegInfinityAndRandomArg_returnTrue() throws Exception {
+        Point y = Point.NEGATIVE_INFINITY;
+        Point x = Point.valueOf(0);
+        Interval interval = Interval.newInstance(x, y);
+        //assertTrue(interval.isHalfInterval());
+
+        assertTrue(interval.isNegativeHalfInterval());
+    }
+
+    @Test
+    public void isPositiveHalfInterval_takesNegInfinityAndRandomArg_returnFalse() throws Exception {
+        Point y = Point.NEGATIVE_INFINITY;
+        Point x = Point.valueOf(0);
+        Interval interval = Interval.newInstance(x, y);
+        //assertTrue(interval.isHalfInterval());
+
+        assertFalse(interval.isPositiveHalfInterval());
+    }
+
+    @Test
+    public void isPositiveHalfInterval_takesPosInfinityAndRandomArg_returnTrue() throws Exception {
+        Point x = Point.POSITIVE_INFINITY;
+        Point y = Point.valueOf(0);
+        Interval interval = Interval.newInstance(x, y);
+
+        assertTrue(interval.isPositiveHalfInterval());
+    }
 }
