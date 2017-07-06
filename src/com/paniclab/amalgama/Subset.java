@@ -18,7 +18,7 @@ public class Subset {
     private Set<Point> createPointSet() {
         Set<Point> points = new HashSet<>(getSegments().size()*2 + 1, 1.0f);
         for (Interval interval : getSegments()) {
-            points.addAll(interval.getPoints());
+            points.addAll(interval.getLimits());
         }
         return points;
     }

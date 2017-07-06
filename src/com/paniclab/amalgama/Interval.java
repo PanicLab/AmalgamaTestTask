@@ -12,7 +12,7 @@ import static com.paniclab.amalgama.Util.isNot;
  * возбуждение NullPointerException. при попытке создать отрезок на базе двух одинаковых бесконечностей возбуждается
  * исключение IntervalException. Создание отрезка на базе плюс- и минус- бесконечностей допустимо, два таких отрезка
  * считаются равными.
- * В случае правильно построенного отрезка метод getPoints() возвращает Set, состоящий из двух экземпляров класса Point.
+ * В случае правильно построенного отрезка метод getLimits() возвращает Set, состоящий из двух экземпляров класса Point.
  * В случае отрезка нулевой длины метод возвращает Set, состоящий из одного экземпляра класса Point.
  * Экземпляры класса неизменяемы и безопасны в многопоточной среде.
  */
@@ -20,27 +20,27 @@ public class Interval {
     private Point lesserLimit;
     private Point largerLimit;
 
-    private Interval(Point one, Point another) {
-        if(one == null || another == null) throw new NullPointerException();
-        if(one.equals(another) && another.isInfinity()) throw new IntervalException("Ошибка при создании отрезка. " +
+    private Interval(Point limit, Point anotherLimit) {
+        if(limit == null || anotherLimit == null) throw new NullPointerException();
+        if(limit.equals(anotherLimit) && anotherLimit.isInfinity()) throw new IntervalException("Ошибка при создании отрезка. " +
                 "Обе точки отрезка равны минус или плюс бесконечность");
 
-        if(one.compareTo(another) < 0) {
-            this.lesserLimit = one;
-            this.largerLimit = another;
+        if(limit.compareTo(anotherLimit) < 0) {
+            this.lesserLimit = limit;
+            this.largerLimit = anotherLimit;
         }
-        if(one.compareTo(another) > 0) {
-            this.lesserLimit = another;
-            this.largerLimit = one;
+        if(limit.compareTo(anotherLimit) > 0) {
+            this.lesserLimit = anotherLimit;
+            this.largerLimit = limit;
         }
-        if(one.compareTo(another) == 0) {
-            this.lesserLimit = one;
-            this.largerLimit = one;
+        if(limit.compareTo(anotherLimit) == 0) {
+            this.lesserLimit = limit;
+            this.largerLimit = limit;
         }
     }
 
-    public static Interval newInstance(Point one, Point another) {
-        return new Interval(one, another);
+    public static Interval newInstance(Point limit, Point anotherLimit) {
+        return new Interval(limit, anotherLimit);
     }
 
 
@@ -147,7 +147,7 @@ public class Interval {
     }
 
 
-    public boolean isSubintervalOf(Interval other) {
+    public boolean isIncludedTo(Interval other) {
         if(this.lesserLimit().lessThen(other.lesserLimit())) return false;
         if(this.lesserLimit().moreThen(other.largerLimit())) return false;
         if(this.largerLimit().lessThen(other.lesserLimit())) return false;
@@ -156,9 +156,28 @@ public class Interval {
     }
 
 
-    public boolean hasCommonBorderWith(Interval other) {
-        return this.getPoints().contains(other.lesserLimit()) ||
-                this.getPoints().contains(other.largerLimit());
+    public boolean isNeighborsWith(Interval another) {
+        if(this.equals(another)) return false;
+        if(this.isContains(another) || another.isContains(this)) return false;
+        return this.getLimits().contains(another.lesserLimit()) ||
+                this.getLimits().contains(another.largerLimit());
+    }
+
+    public boolean isContains(Point point) {
+        return point.isBelongsTo(this);
+    }
+
+    public boolean isContains(Interval another) {
+        if(this.lesserLimit().moreThen(another.lesserLimit())) return false;
+        if(this.largerLimit().lessThen(another.largerLimit())) return false;
+        return true;
+    }
+
+    public boolean hasSuperpositionWith(Interval another) {
+        return this.lesserLimit().isBelongsTo(another) ||
+                this.largerLimit().isBelongsTo(another) ||
+                another.lesserLimit().isBelongsTo(this) ||
+                another.largerLimit().isBelongsTo(this);
     }
 
 
@@ -172,8 +191,8 @@ public class Interval {
     }
 
 
-    public Set<Point> getPoints() {
-        Set<Point> pointSet = new HashSet<>(2);
+    public Set<Point> getLimits() {
+        Set<Point> pointSet = new HashSet<>(2 + 1, 1.0f);
         pointSet.add(lesserLimit);
         pointSet.add(largerLimit);
         return pointSet;

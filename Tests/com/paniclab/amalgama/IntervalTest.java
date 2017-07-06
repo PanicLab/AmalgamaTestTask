@@ -1,8 +1,11 @@
 package com.paniclab.amalgama;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.junit.Assert.*;
 
@@ -354,5 +357,240 @@ public class IntervalTest {
         Interval intervalTwo = null;
 
         assertFalse(intervalOne.equals(intervalTwo));
+    }
+
+    @Test
+    public void getLimits_randomInterval_expectedSetWithSize2() throws Exception {
+        Point x = Point.valueOf(100);
+        Point y = Point.valueOf(14);
+        Interval interval = Interval.newInstance(x, y);
+
+        Set<Point> expected = new HashSet<>();
+        expected.add(x);
+        expected.add(y);
+
+        assertEquals(expected, interval.getLimits());
+        assertEquals(expected.size(), 2);
+    }
+
+    @Test
+    public void getLimits_randomZeroLengthInterval_expectedSetWithSize1() throws Exception {
+        Point x = Point.valueOf(14);
+        Point y = Point.valueOf(14);
+        Interval interval = Interval.newInstance(x, y);
+
+        Set<Point> expected = new HashSet<>();
+        expected.add(x);
+        expected.add(y);
+
+        assertEquals(expected, interval.getLimits());
+        assertEquals(expected.size(), 1);
+    }
+
+    @Test
+    public void getLimits_negHalfInterval_expectedSetWithSize2() throws Exception {
+        Point x = Point.NEGATIVE_INFINITY;
+        Point y = Point.valueOf(0);
+        Interval interval = Interval.newInstance(x, y);
+
+        Set<Point> expected = new HashSet<>();
+        expected.add(x);
+        expected.add(y);
+
+        assertEquals(expected, interval.getLimits());
+        assertEquals(expected.size(), 2);
+    }
+
+    @Test
+    public void getLimits_posHalfInterval_expectedSetWithSize2() throws Exception {
+        Point x = Point.POSITIVE_INFINITY;
+        Point y = Point.valueOf(0);
+        Interval interval = Interval.newInstance(x, y);
+
+        Set<Point> expected = new HashSet<>();
+        expected.add(x);
+        expected.add(y);
+
+        assertEquals(expected, interval.getLimits());
+        assertEquals(expected.size(), 2);
+    }
+
+    @Test
+    public void isNeighborsWith_twoRandomIntervalsWithOneCommonBorder_symmetric_returnTrue() throws Exception {
+        Point x1 = Point.valueOf(100);
+        Point y1 = Point.valueOf(14);
+        Interval intervalOne = Interval.newInstance(x1, y1);
+
+        Point x2 = Point.valueOf(121);
+        Point y2 = Point.valueOf(100);
+        Interval intervalTwo = Interval.newInstance(x2, y2);
+
+        assertTrue(intervalOne.isNeighborsWith(intervalTwo));
+        assertTrue(intervalTwo.isNeighborsWith(intervalOne));
+    }
+
+    @Test
+    public void isNeighborsWith_twoRandomIntervalsWithNoCommonBorder_returnFalse() throws Exception {
+        Point x1 = Point.valueOf(100);
+        Point y1 = Point.valueOf(140);
+        Interval intervalOne = Interval.newInstance(x1, y1);
+
+        Point x2 = Point.valueOf(141);
+        Point y2 = Point.valueOf(200);
+        Interval intervalTwo = Interval.newInstance(x2, y2);
+
+        assertFalse(intervalOne.isNeighborsWith(intervalTwo));
+    }
+
+    @Test
+    public void isNeighborsWith_twoRandomEqualIntervals_returnFalse() throws Exception {
+        Point x1 = Point.valueOf(100);
+        Point y1 = Point.valueOf(140);
+        Interval intervalOne = Interval.newInstance(x1, y1);
+
+        Point x2 = Point.valueOf(140);
+        Point y2 = Point.valueOf(100);
+        Interval intervalTwo = Interval.newInstance(x2, y2);
+
+        assertTrue(intervalOne.equals(intervalTwo));
+        assertFalse(intervalOne.isNeighborsWith(intervalTwo));
+    }
+
+    @Test
+    public void isNeighborsWith_twoRandomIntervalsWithCommonBorderAndOneContainsAnother_returnFalse() throws Exception {
+        Point x1 = Point.valueOf(100);
+        Point y1 = Point.valueOf(140);
+        Interval intervalOne = Interval.newInstance(x1, y1);
+
+        Point x2 = Point.valueOf(100);
+        Point y2 = Point.valueOf(120);
+        Interval intervalTwo = Interval.newInstance(x2, y2);
+
+        assertFalse(intervalOne.isNeighborsWith(intervalTwo));
+    }
+
+    @Test
+    public void isContains_twoRandomIntervalsWithNoEqualLimitsAndOneContainsAnother_returnTrue() throws Exception {
+        Point x1 = Point.valueOf(100);
+        Point y1 = Point.valueOf(140);
+        Interval intervalOne = Interval.newInstance(x1, y1);
+
+        Point x2 = Point.valueOf(101);
+        Point y2 = Point.valueOf(119);
+        Interval intervalTwo = Interval.newInstance(x2, y2);
+
+        assertTrue(intervalOne.isContains(intervalTwo));
+    }
+
+    @Test
+    public void isContains_twoRandomIntervalsWithOneEqualLimitAndOneContainsAnother_returnTrue() throws Exception {
+        Point x1 = Point.valueOf(100);
+        Point y1 = Point.valueOf(140);
+        Interval intervalOne = Interval.newInstance(x1, y1);
+
+        Point x2 = Point.valueOf(100);
+        Point y2 = Point.valueOf(119);
+        Interval intervalTwo = Interval.newInstance(x2, y2);
+
+        assertTrue(intervalOne.isContains(intervalTwo));
+    }
+
+    @Test
+    public void isContains_twoRandomEqualIntervals_symmetric_returnTrue() throws Exception {
+        Point x1 = Point.valueOf(100);
+        Point y1 = Point.valueOf(140);
+        Interval intervalOne = Interval.newInstance(x1, y1);
+
+        Point x2 = Point.valueOf(100);
+        Point y2 = Point.valueOf(140);
+        Interval intervalTwo = Interval.newInstance(x2, y2);
+        assertEquals(intervalOne, intervalTwo);
+
+        assertTrue(intervalOne.isContains(intervalTwo));
+        assertTrue(intervalTwo.isContains(intervalOne));
+    }
+
+    @Test
+    public void isContains_twoRandomIntervalsWithNoEqualLimitsButHasSuperposition_returnFalse() throws Exception {
+        Point x1 = Point.valueOf(100);
+        Point y1 = Point.valueOf(140);
+        Interval intervalOne = Interval.newInstance(x1, y1);
+
+        Point x2 = Point.valueOf(120);
+        Point y2 = Point.valueOf(200);
+        Interval intervalTwo = Interval.newInstance(x2, y2);
+
+        assertFalse(intervalOne.isContains(intervalTwo));
+        assertFalse(intervalTwo.isContains(intervalOne));
+    }
+
+    @Test
+    public void isContains_twoRandomIntervalsWithNoEqualLimitsAndHasNoSuperposition_returnFalse() throws Exception {
+        Point x1 = Point.valueOf(100);
+        Point y1 = Point.valueOf(140);
+        Interval intervalOne = Interval.newInstance(x1, y1);
+
+        Point x2 = Point.valueOf(150);
+        Point y2 = Point.valueOf(200);
+        Interval intervalTwo = Interval.newInstance(x2, y2);
+
+        assertFalse(intervalOne.isContains(intervalTwo));
+        assertFalse(intervalTwo.isContains(intervalOne));
+    }
+
+    @Test
+    public void hasSuperpositionWith_twoRandomIntervalsThatHasSuperposition_returnTrue() throws Exception {
+        Point x1 = Point.valueOf(100);
+        Point y1 = Point.valueOf(140);
+        Interval intervalOne = Interval.newInstance(x1, y1);
+
+        Point x2 = Point.valueOf(139);
+        Point y2 = Point.valueOf(200);
+        Interval intervalTwo = Interval.newInstance(x2, y2);
+
+        assertTrue(intervalOne.hasSuperpositionWith(intervalTwo));
+        assertTrue(intervalTwo.hasSuperpositionWith(intervalOne));
+    }
+
+    @Test
+    public void hasSuperpositionWith_twoRandomIntervalsThatHasNoSuperposition_returnFalse() throws Exception {
+        Point x1 = Point.valueOf(100);
+        Point y1 = Point.valueOf(140);
+        Interval intervalOne = Interval.newInstance(x1, y1);
+
+        Point x2 = Point.valueOf(141);
+        Point y2 = Point.valueOf(200);
+        Interval intervalTwo = Interval.newInstance(x2, y2);
+
+        assertFalse(intervalOne.hasSuperpositionWith(intervalTwo));
+        assertFalse(intervalTwo.hasSuperpositionWith(intervalOne));
+    }
+
+    @Test
+    public void hasSuperpositionWith_twoRandomIntervalsAndOneContainsAnother_returnTrue() throws Exception {
+        Point x1 = Point.valueOf(100);
+        Point y1 = Point.valueOf(200);
+        Interval intervalOne = Interval.newInstance(x1, y1);
+
+        Point x2 = Point.valueOf(101);
+        Point y2 = Point.valueOf(199);
+        Interval intervalTwo = Interval.newInstance(x2, y2);
+
+        assertTrue(intervalOne.hasSuperpositionWith(intervalTwo));
+        assertTrue(intervalTwo.hasSuperpositionWith(intervalOne));
+    }
+
+    @Test
+    public void hasSuperpositionWith_infiniteAndRandomIntervals_returnTrue() throws Exception {
+        Point x1 = Point.NEGATIVE_INFINITY;
+        Point y1 = Point.POSITIVE_INFINITY;
+        Interval intervalOne = Interval.newInstance(x1, y1);
+
+        Point x2 = Point.valueOf(101);
+        Point y2 = Point.valueOf(199);
+        Interval intervalTwo = Interval.newInstance(x2, y2);
+
+        assertTrue(intervalOne.hasSuperpositionWith(intervalTwo));
+        assertTrue(intervalTwo.hasSuperpositionWith(intervalOne));
     }
 }
