@@ -27,14 +27,14 @@ public class IntervalTest {
     }
 
     @Test(expected = IntervalException.class)
-    public void newInstance_takesAllArgsAsNegInfinity_throwWrongSegmentException() throws Exception {
+    public void newInstance_takesAllArgsAsNegInfinity_throwIntervalException() throws Exception {
         Point x = Point.NEGATIVE_INFINITY;
         Point y = Point.NEGATIVE_INFINITY;
         Interval interval = Interval.newInstance(x, y);
     }
 
     @Test(expected = IntervalException.class)
-    public void newInstance_takesAllArgsAsPosInfinity_throwWrongSegmentException() throws Exception {
+    public void newInstance_takesAllArgsAsPosInfinity_throwIntervalException() throws Exception {
         Point x = Point.POSITIVE_INFINITY;
         Point y = Point.POSITIVE_INFINITY;
         Interval interval = Interval.newInstance(x, y);
