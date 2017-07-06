@@ -6,7 +6,11 @@ import java.util.Objects;
 import static com.paniclab.amalgama.Util.isNot;
 
 /**
- * Created by Сергей on 04.07.2017.
+ * Абстракция, представляющая точку на плоскости координат.
+ * Плюс и минус бесконечности, а также точка "ноль" представлены специальными константами. Согласно контракта, точка
+ * "плюс бесконечность" всегда больше любой другой точки, точка "минус бесконечность" всегда меньше любой другой точки.
+ * Две плюс бесконечности или две минус бесконечности равны между собой.
+ * Экземпляры класса неизменяемы, их использование в многопоточной среде безопасно.
  */
 public class Point implements Valuable<BigDecimal>, Comparable<Point> {
 
@@ -87,6 +91,17 @@ public class Point implements Valuable<BigDecimal>, Comparable<Point> {
 
     public boolean moreThenOrEquals(Point other) {
         return this.compareTo(other) >= 0;
+    }
+
+
+    /**
+     * Метод определяет, находится ли точка в пределах заданного отрезка, возвращая true в этом случае. Если точка равна
+     * одной из границ отрезка, метод возвращает true.
+    */
+    public boolean belongsTo(Interval interval) {
+        if(this.lessThen(interval.lesserLimit())) return false;
+        if(this.moreThen(interval.largerLimit())) return false;
+        return true;
     }
 
 
