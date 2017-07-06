@@ -491,4 +491,49 @@ public class PointTest {
         Interval interval = Interval.newInstance(x, y);
         assertTrue(point.isBelongsTo(interval));
     }
+
+    @Test
+    public void isBorderOf_randomPointAndIntervalWithRandomLimits_pointIsLesserLimit_returnTrue() throws Exception {
+        Point point = Point.valueOf(-2);
+        Point x = Point.valueOf(-2);
+        Point y = Point.valueOf(11);
+        Interval interval = Interval.newInstance(x, y);
+        assertTrue(point.isBorderOf(interval));
+    }
+
+    @Test
+    public void isBorderOf_randomPointAndIntervalWithRandomLimits_pointIsLargerLimit_returnTrue() throws Exception {
+        Point point = Point.valueOf(11);
+        Point x = Point.valueOf(-2);
+        Point y = Point.valueOf(11);
+        Interval interval = Interval.newInstance(x, y);
+        assertTrue(point.isBorderOf(interval));
+    }
+
+    @Test
+    public void isBorderOf_randomPointAndIntervalWithRandomLimits_pointIsInButNotLimit_returnFalse() throws Exception {
+        Point point = Point.valueOf(10);
+        Point x = Point.valueOf(-2);
+        Point y = Point.valueOf(11);
+        Interval interval = Interval.newInstance(x, y);
+        assertFalse(point.isBorderOf(interval));
+    }
+
+    @Test
+    public void isBorderOf_randomPointAndZeroLengthInterval_pointIsEquals_returnTrue() throws Exception {
+        Point point = Point.valueOf(-2);
+        Point x = Point.valueOf(-2);
+        Point y = Point.valueOf(-2);
+        Interval interval = Interval.newInstance(x, y);
+        assertTrue(point.isBorderOf(interval));
+    }
+
+    @Test
+    public void isBorderOf_randomPointAndIntervalWithRandomLimits_pointIsOut_returnFalse() throws Exception {
+        Point point = Point.valueOf(99);
+        Point x = Point.valueOf(-2);
+        Point y = Point.valueOf(11);
+        Interval interval = Interval.newInstance(x, y);
+        assertFalse(point.isBorderOf(interval));
+    }
 }
