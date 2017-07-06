@@ -98,10 +98,14 @@ public class Point implements Valuable<BigDecimal>, Comparable<Point> {
      * Метод определяет, находится ли точка в пределах заданного отрезка, возвращая true в этом случае. Если точка равна
      * одной из границ отрезка, метод возвращает true.
     */
-    public boolean belongsTo(Interval interval) {
+    public boolean isBelongsTo(Interval interval) {
         if(this.lessThen(interval.lesserLimit())) return false;
         if(this.moreThen(interval.largerLimit())) return false;
         return true;
+    }
+
+    public boolean isBorderOf(Interval interval) {
+        return this.equals(interval.lesserLimit()) || this.equals(interval.largerLimit());
     }
 
 
