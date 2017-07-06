@@ -22,22 +22,22 @@ public final class Util {
         Collection<Point> extremePoints = getMinAndMaxElementsOf(pointSet);
         pointSet.removeAll(extremePoints);
 
-        int variant = pointSet.size();
-        final int bothIntervalsIsNotZeroLength = 2;
-        final int oneIntervalIsZeroLength = 1;
-        final int bothIntervalsAreZeroLength = 0;
+        int behavior = pointSet.size();
+        final int BOTH_INTERVALS_IS_NOT_ZERO_LENGTH = 2;
+        final int ONE_INTERVAL_IS_ZERO_LENGTH = 1;
+        final int BOTH_INTERVALS_IS_ZERO_LENGTH = 0;
 
         Iterator<Point> iterator = pointSet.iterator();
-        switch (variant) {
-            case bothIntervalsIsNotZeroLength: {
+        switch (behavior) {
+            case BOTH_INTERVALS_IS_NOT_ZERO_LENGTH: {
                 Point x = iterator.next();
                 Point y = iterator.next();
                 return Interval.newInstance(x, y);
             }
-            case oneIntervalIsZeroLength: {
+            case ONE_INTERVAL_IS_ZERO_LENGTH: {
                 return first.hasZeroLength() ? first : second;
             }
-            case bothIntervalsAreZeroLength: {
+            case BOTH_INTERVALS_IS_ZERO_LENGTH: {
                 return first;
             }
             default: {
