@@ -173,4 +173,186 @@ public class IntervalTest {
 
         assertTrue(interval.isPositiveHalfInterval());
     }
+
+    @Test
+    public void equals_twoRandomIntervalsWithEqualLimits_returnTrue() throws Exception {
+        Point x1 = Point.valueOf(-27);
+        Point y1 = Point.valueOf(-1);
+        Interval intervalOne = Interval.newInstance(x1, y1);
+
+        Point x2 = Point.valueOf(-1);
+        Point y2 = Point.valueOf(-27);
+        Interval intervalTwo = Interval.newInstance(x2, y2);
+
+        assertTrue(intervalOne.equals(intervalTwo));
+    }
+
+    @Test
+    public void equals_twoRandomIntervalsWithNotEqualLimits_returnFalse() throws Exception {
+        Point x1 = Point.valueOf(-27);
+        Point y1 = Point.valueOf(-1);
+        Interval intervalOne = Interval.newInstance(x1, y1);
+
+        Point x2 = Point.valueOf(-1);
+        Point y2 = Point.valueOf(-28);
+        Interval intervalTwo = Interval.newInstance(x2, y2);
+
+        assertFalse(intervalOne.equals(intervalTwo));
+    }
+
+    @Test
+    public void equals_twoRandomZeroLengthIntervalsWithEqualLimits_returnTrue() throws Exception {
+        Point x1 = Point.valueOf(-10);
+        Point y1 = Point.valueOf(-10);
+        Interval intervalOne = Interval.newInstance(x1, y1);
+
+        Point x2 = Point.valueOf(-10);
+        Point y2 = Point.valueOf(-10);
+        Interval intervalTwo = Interval.newInstance(x2, y2);
+
+        assertTrue(intervalOne.equals(intervalTwo));
+    }
+
+    @Test
+    public void equals_twoInfiniteIntervals_returnTrue() throws Exception {
+        Point x1 = Point.POSITIVE_INFINITY;
+        Point y1 = Point.NEGATIVE_INFINITY;
+        Interval intervalOne = Interval.newInstance(x1, y1);
+
+        Point x2 = Point.NEGATIVE_INFINITY;
+        Point y2 = Point.POSITIVE_INFINITY;
+        Interval intervalTwo = Interval.newInstance(x2, y2);
+
+        assertTrue(intervalOne.equals(intervalTwo));
+    }
+
+    @Test
+    public void equals_twoNegHalfIntervalsWithSameLimit_returnTrue() throws Exception {
+        Point x1 = Point.NEGATIVE_INFINITY;
+        Point y1 = Point.valueOf(14);
+        Interval intervalOne = Interval.newInstance(x1, y1);
+
+        Point x2 = Point.valueOf(14);
+        Point y2 = Point.NEGATIVE_INFINITY;
+        Interval intervalTwo = Interval.newInstance(x2, y2);
+
+        assertTrue(intervalOne.equals(intervalTwo));
+    }
+
+    @Test
+    public void equals_twoNegHalfIntervalsWithNotEqualLimit_returnFalse() throws Exception {
+        Point x1 = Point.NEGATIVE_INFINITY;
+        Point y1 = Point.valueOf(1);
+        Interval intervalOne = Interval.newInstance(x1, y1);
+
+        Point x2 = Point.valueOf(14);
+        Point y2 = Point.NEGATIVE_INFINITY;
+        Interval intervalTwo = Interval.newInstance(x2, y2);
+
+        assertFalse(intervalOne.equals(intervalTwo));
+    }
+
+    @Test
+    public void equals_twoPosHalfIntervalsWithSameLimit_returnTrue() throws Exception {
+        Point x1 = Point.POSITIVE_INFINITY;
+        Point y1 = Point.valueOf(14);
+        Interval intervalOne = Interval.newInstance(x1, y1);
+
+        Point x2 = Point.valueOf(14);
+        Point y2 = Point.POSITIVE_INFINITY;
+        Interval intervalTwo = Interval.newInstance(x2, y2);
+    }
+
+    @Test
+    public void equals_twoPosHalfIntervalsWithNotEqualLimit_returnFalse() throws Exception {
+        Point x1 = Point.POSITIVE_INFINITY;
+        Point y1 = Point.valueOf(-14);
+        Interval intervalOne = Interval.newInstance(x1, y1);
+
+        Point x2 = Point.valueOf(14);
+        Point y2 = Point.POSITIVE_INFINITY;
+        Interval intervalTwo = Interval.newInstance(x2, y2);
+
+        assertFalse(intervalOne.equals(intervalTwo));
+    }
+
+    @Test
+    public void equals_negAndPosHalfIntervalsWithCommonBorder_returnFalse() throws Exception {
+        Point x1 = Point.POSITIVE_INFINITY;
+        Point y1 = Point.valueOf(14);
+        Interval intervalOne = Interval.newInstance(x1, y1);
+
+        Point x2 = Point.valueOf(14);
+        Point y2 = Point.NEGATIVE_INFINITY;
+        Interval intervalTwo = Interval.newInstance(x2, y2);
+
+        assertFalse(intervalOne.equals(intervalTwo));
+    }
+
+    @Test
+    public void equals_isReflexive() throws Exception {
+        Point x1 = Point.POSITIVE_INFINITY;
+        Point y1 = Point.valueOf(14);
+        Interval interval = Interval.newInstance(x1, y1);
+        assertTrue(interval.equals(interval));
+    }
+
+    @Test
+    public void equals_isSymmetric() throws Exception {
+        Point x1 = Point.POSITIVE_INFINITY;
+        Point y1 = Point.valueOf(14);
+        Interval intervalOne = Interval.newInstance(x1, y1);
+
+        Point x2 = Point.valueOf(14);
+        Point y2 = Point.POSITIVE_INFINITY;
+        Interval intervalTwo = Interval.newInstance(x2, y2);
+
+        assertTrue(intervalOne.equals(intervalTwo));
+        assertTrue(intervalTwo.equals(intervalOne));
+    }
+
+    @Test
+    public void equals_isTransitive() throws Exception {
+        Point x1 = Point.NEGATIVE_INFINITY;
+        Point y1 = Point.valueOf(14);
+        Interval x = Interval.newInstance(x1, y1);
+
+        Point x2 = Point.valueOf(14);
+        Point y2 = Point.NEGATIVE_INFINITY;
+        Interval y = Interval.newInstance(x2, y2);
+
+        Point x3 = Point.valueOf(14);
+        Point y3 = Point.NEGATIVE_INFINITY;
+        Interval z = Interval.newInstance(x3, y3);
+
+        assertTrue(x.equals(y));
+        assertTrue(y.equals(z));
+        assertTrue(x.equals(z));
+    }
+
+    @Test
+    public void equals_isConsistent() throws Exception {
+        Point x1 = Point.valueOf(100);
+        Point y1 = Point.valueOf(14);
+        Interval intervalOne = Interval.newInstance(x1, y1);
+
+        Point x2 = Point.valueOf(14);
+        Point y2 = Point.valueOf(100);
+        Interval intervalTwo = Interval.newInstance(x2, y2);
+
+        for(int i=0; i < 100; i++) {
+            assertTrue(intervalOne.equals(intervalTwo));
+        }
+    }
+
+    @Test
+    public void equals_comparesToNull_returnFalse() throws Exception {
+        Point x1 = Point.valueOf(100);
+        Point y1 = Point.valueOf(14);
+        Interval intervalOne = Interval.newInstance(x1, y1);
+
+        Interval intervalTwo = null;
+
+        assertFalse(intervalOne.equals(intervalTwo));
+    }
 }
