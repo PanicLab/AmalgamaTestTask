@@ -50,7 +50,6 @@ public class Point implements Valuable<BigDecimal>, Comparable<Point> {
     }
 
 
-    //TODO тесты
     public BigDecimal absValue() {
         return this.value().abs();
     }
@@ -76,7 +75,6 @@ public class Point implements Valuable<BigDecimal>, Comparable<Point> {
     }
 
 
-    //TODO тесты
     public boolean lessThenOrEquals(Point other) {
         return this.compareTo(other) <= 0;
     }
@@ -87,7 +85,6 @@ public class Point implements Valuable<BigDecimal>, Comparable<Point> {
     }
 
 
-    //TODO тесты
     public boolean moreThenOrEquals(Point other) {
         return this.compareTo(other) >= 0;
     }

@@ -237,7 +237,7 @@ public class PointTest {
     }
 
     @Test
-    public void value_createInstanceWithBigDecimalArg_returnSame() throws Exception {
+    public void value_createInstanceWithBigDecimalArg_returnArg() throws Exception {
         BigDecimal number = new BigDecimal("3.1415");
         Point x = Point.valueOf(number);
 
@@ -311,6 +311,63 @@ public class PointTest {
     }
 
     @Test
+    public void lessThenOrEquals_lesserRandomValueComparesBiggerRandomValue_returnTrue() throws Exception {
+        Point x = Point.valueOf(-100);
+        Point y = Point.valueOf(100);
+
+        assertTrue(x.lessThenOrEquals(y));
+    }
+
+    @Test
+    public void lessThenOrEquals_comparesTwoEqualRandomValues_returnTrue() throws Exception {
+        Point x = Point.valueOf(-100);
+        Point y = Point.valueOf(-100);
+
+        assertTrue(x.lessThenOrEquals(y));
+    }
+
+    @Test
+    public void lessThenOrEquals_comparesTwoNegInfinities_returnTrue() throws Exception {
+        Point x = Point.NEGATIVE_INFINITY;
+        Point y = Point.NEGATIVE_INFINITY;
+
+        assertTrue(x.lessThenOrEquals(y));
+    }
+
+    @Test
+    public void lessThenOrEquals_comparesTwoPosInfinities_returnTrue() throws Exception {
+        Point x = Point.POSITIVE_INFINITY;
+        Point y = Point.POSITIVE_INFINITY;
+
+        assertTrue(x.lessThenOrEquals(y));
+    }
+
+    @Test
+    public void lessThenOrEquals_comparesTwoZeros_returnTrue() throws Exception {
+        Point x = Point.ZERO;
+        Point y = Point.ZERO;
+
+        assertTrue(x.lessThenOrEquals(y));
+    }
+
+    @Test
+    public void lessThenOrEquals_comparesNegAndPosInfinities_returnTrue() throws Exception {
+        Point x = Point.NEGATIVE_INFINITY;
+        Point y = Point.POSITIVE_INFINITY;
+
+        assertTrue(x.lessThenOrEquals(y));
+    }
+
+    @Test
+    public void lessThenOrEquals_comparesPosAndNegInfinities_returnFalse() throws Exception {
+        Point x = Point.POSITIVE_INFINITY;
+        Point y = Point.NEGATIVE_INFINITY;
+
+        assertFalse(x.lessThenOrEquals(y));
+    }
+
+
+    @Test
     public void moreThen_posInfinityComparesWithRandomValue_returnTrue() throws Exception {
         Point x = Point.POSITIVE_INFINITY;
         Point y = Point.valueOf(Integer.MAX_VALUE);
@@ -324,5 +381,69 @@ public class PointTest {
         Point y = Point.POSITIVE_INFINITY;
 
         assertFalse(x.moreThen(y));
+    }
+
+    @Test
+    public void moreThenOrEquals_biggerRandomValueComparesLesserRandomValue_returnTrue() throws Exception {
+        Point x = Point.valueOf(100);
+        Point y = Point.valueOf(-100);
+
+        assertTrue(x.moreThenOrEquals(y));
+    }
+
+    @Test
+    public void moreThenOrEquals_lesserRandomValueComparesBiggerRandomValue_returnFalse() throws Exception {
+        Point x = Point.valueOf(-100);
+        Point y = Point.valueOf(100);
+
+        assertFalse(x.moreThenOrEquals(y));
+    }
+
+    @Test
+    public void moreThenOrEquals_comparesTwoZeros_returnTrue() throws Exception {
+        Point x = Point.ZERO;
+        Point y = Point.ZERO;
+
+        assertTrue(x.moreThenOrEquals(y));
+    }
+
+    @Test
+    public void moreThenOrEquals_compareNegAndPosInfinities_returnFalse() throws Exception {
+        Point x = Point.NEGATIVE_INFINITY;
+        Point y = Point.POSITIVE_INFINITY;
+
+        assertFalse(x.moreThenOrEquals(y));
+    }
+
+    @Test
+    public void moreThenOrEquals_comparesPosAndNegInfinities_returnTrue() throws Exception {
+        Point x = Point.POSITIVE_INFINITY;
+        Point y = Point.NEGATIVE_INFINITY;
+
+        assertTrue(x.moreThenOrEquals(y));
+    }
+
+    @Test
+    public void moreThenOrEquals_comparesTwoNegInfinities_returnTrue() throws Exception {
+        Point x = Point.NEGATIVE_INFINITY;
+        Point y = Point.NEGATIVE_INFINITY;
+
+        assertTrue(x.moreThenOrEquals(y));
+    }
+
+    @Test
+    public void moreThenOrEquals_comparesTwoPosInfinities_returnTrue() throws Exception {
+        Point x = Point.POSITIVE_INFINITY;
+        Point y = Point.POSITIVE_INFINITY;
+
+        assertTrue(x.moreThenOrEquals(y));
+    }
+
+    @Test
+    public void absValue() throws Exception {
+        Point x = Point.valueOf(-5);
+        Point y = Point.valueOf(5);
+
+        assertEquals(x.absValue(), y.value());
     }
 }
