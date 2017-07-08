@@ -1,5 +1,6 @@
 package com.paniclab.amalgama;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -11,16 +12,16 @@ public class Subset {
     private Set<Point> pointSet;
 
     private Subset(Builder builder) {
-        this.intervalSet = builder.intervals;
+        this.intervalSet = Collections.unmodifiableSet(builder.intervals);
         this.pointSet = createPointSet();
     }
 
     private Set<Point> createPointSet() {
-        Set<Point> points = new HashSet<>(getSegments().size()*2 + 1, 1.0f);
-        for (Interval interval : getSegments()) {
+        Set<Point> points = new HashSet<>(getIntervals().size()*2 + 1, 1.0f);
+        for (Interval interval : getIntervals()) {
             points.addAll(interval.getLimits());
         }
-        return points;
+        return Collections.unmodifiableSet(points);
     }
 
     public static Builder builder() {
@@ -28,7 +29,7 @@ public class Subset {
     }
 
 
-    public Set<Interval> getSegments() {
+    public Set<Interval> getIntervals() {
         return intervalSet;
     }
 

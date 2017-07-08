@@ -11,6 +11,11 @@ import static org.junit.Assert.*;
  */
 public class PointTest {
 
+    @Test(expected = PointException.class)
+    public void valueOf_takesBadData_throwPointException() throws Exception {
+        Point x = Point.valueOf("fwe");
+    }
+
     @Test
     public void equals_isReflexive() throws Exception {
         Point x = Point.valueOf("3");
@@ -244,6 +249,24 @@ public class PointTest {
         assertEquals(x.value(), number);
     }
 
+    @Test(expected = PointException.class)
+    public void value_thisIsPosInfinity_throwPointException() throws Exception {
+        Point x = Point.POSITIVE_INFINITY;
+        x.value();
+    }
+
+    @Test(expected = PointException.class)
+    public void value_thisIsNegInfinity_throwPointException() throws Exception {
+        Point x = Point.NEGATIVE_INFINITY;
+        x.value();
+    }
+
+    @Test
+    public void value_isZero_returnPointZeroValue() throws Exception {
+        Point x = Point.valueOf(0);
+        assertTrue(x.value().equals(Point.ZERO.value()));
+    }
+
     @Test
     public void isInfinity_createdAsInfinity_returnTrue() throws Exception {
         Point x = Point.POSITIVE_INFINITY;
@@ -447,12 +470,24 @@ public class PointTest {
         assertEquals(x.absValue(), y.value());
     }
 
+    @Test(expected = PointException.class)
+    public void absValue_pointIsNegInfinity_throwPointException() throws Exception {
+        Point x = Point.NEGATIVE_INFINITY;
+        x.absValue();
+    }
+
+    @Test(expected = PointException.class)
+    public void absValue_pointIsPosInfinity_throwPointException() throws Exception {
+        Point x = Point.POSITIVE_INFINITY;
+        x.absValue();
+    }
+
     @Test
     public void isBelongsTo_randomPointAndIntervalWithRandomLimits_pointIsIn_returnTrue() throws Exception {
         Point point = Point.valueOf(10);
         Point x = Point.valueOf(-1);
         Point y = Point.valueOf(11);
-        Interval interval = Interval.newInstance(x, y);
+        Interval interval = Interval.between(x, y);
         assertTrue(point.isBelongsTo(interval));
     }
 
@@ -461,7 +496,7 @@ public class PointTest {
         Point point = Point.valueOf(22);
         Point x = Point.valueOf(-1);
         Point y = Point.valueOf(11);
-        Interval interval = Interval.newInstance(x, y);
+        Interval interval = Interval.between(x, y);
         assertFalse(point.isBelongsTo(interval));
     }
 
@@ -470,7 +505,7 @@ public class PointTest {
         Point point = Point.valueOf(-1);
         Point x = Point.valueOf(-1);
         Point y = Point.valueOf(11);
-        Interval interval = Interval.newInstance(x, y);
+        Interval interval = Interval.between(x, y);
         assertTrue(point.isBelongsTo(interval));
     }
 
@@ -479,7 +514,7 @@ public class PointTest {
         Point point = Point.valueOf(11);
         Point x = Point.valueOf(-1);
         Point y = Point.valueOf(11);
-        Interval interval = Interval.newInstance(x, y);
+        Interval interval = Interval.between(x, y);
         assertTrue(point.isBelongsTo(interval));
     }
 
@@ -488,7 +523,7 @@ public class PointTest {
         Point point = Point.valueOf(11);
         Point x = Point.valueOf(11);
         Point y = Point.valueOf(11);
-        Interval interval = Interval.newInstance(x, y);
+        Interval interval = Interval.between(x, y);
         assertTrue(point.isBelongsTo(interval));
     }
 
@@ -497,7 +532,7 @@ public class PointTest {
         Point point = Point.valueOf(-2);
         Point x = Point.valueOf(-2);
         Point y = Point.valueOf(11);
-        Interval interval = Interval.newInstance(x, y);
+        Interval interval = Interval.between(x, y);
         assertTrue(point.isBorderOf(interval));
     }
 
@@ -506,7 +541,7 @@ public class PointTest {
         Point point = Point.valueOf(11);
         Point x = Point.valueOf(-2);
         Point y = Point.valueOf(11);
-        Interval interval = Interval.newInstance(x, y);
+        Interval interval = Interval.between(x, y);
         assertTrue(point.isBorderOf(interval));
     }
 
@@ -515,7 +550,7 @@ public class PointTest {
         Point point = Point.valueOf(10);
         Point x = Point.valueOf(-2);
         Point y = Point.valueOf(11);
-        Interval interval = Interval.newInstance(x, y);
+        Interval interval = Interval.between(x, y);
         assertFalse(point.isBorderOf(interval));
     }
 
@@ -524,7 +559,7 @@ public class PointTest {
         Point point = Point.valueOf(-2);
         Point x = Point.valueOf(-2);
         Point y = Point.valueOf(-2);
-        Interval interval = Interval.newInstance(x, y);
+        Interval interval = Interval.between(x, y);
         assertTrue(point.isBorderOf(interval));
     }
 
@@ -533,7 +568,7 @@ public class PointTest {
         Point point = Point.valueOf(99);
         Point x = Point.valueOf(-2);
         Point y = Point.valueOf(11);
-        Interval interval = Interval.newInstance(x, y);
+        Interval interval = Interval.between(x, y);
         assertFalse(point.isBorderOf(interval));
     }
 }

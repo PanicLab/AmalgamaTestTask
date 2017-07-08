@@ -8,13 +8,17 @@ import static com.paniclab.amalgama.Util.isNot;
 /**
  * Created by Сергей on 04.07.2017.
  * Класс представляет собой абстракцию одного из отрезков подмножества.
- * Экземпляр класса создается методом статической генерации. Передача null в качестве любого из аргументов влечет
- * возбуждение NullPointerException. при попытке создать отрезок на базе двух одинаковых бесконечностей возбуждается
- * исключение IntervalException. Создание отрезка на базе плюс- и минус- бесконечностей допустимо, два таких отрезка
- * считаются равными.
- * В случае правильно построенного отрезка метод getLimits() возвращает Set, состоящий из двух экземпляров класса Point.
- * В случае отрезка нулевой длины метод возвращает Set, состоящий из одного экземпляра класса Point.
- * Экземпляры класса неизменяемы и безопасны в многопоточной среде.
+ * Экземпляр класса создается методами статической генерации:
+ *                  newInstance(Point, Point);
+ *                  between(Point, Point);
+ * Последний за кулисами просто вызывает newInstance(Point, Point).
+ * Передача null в качестве любого из аргументов влечет возбуждение NullPointerException. При попытке создать отрезок
+ * на базе двух одинаковых бесконечностей возбуждается исключение IntervalException. Создание отрезка на базе плюс- и
+ * минус- бесконечностей допустимо, два таких отрезка считаются равными.
+ * В случае правильно построенного отрезка метод getLimits() возвращает неизменяемый экземпляр Set, состоящий из двух
+ * экземпляров класса Point. В случае отрезка нулевой длины метод возвращает Set, состоящий из одного экземпляра класса
+ * Point.
+ * Экземпляры класса неизменяемы, их использование в многопоточной среде безопасно.
  */
 public class Interval {
     private Point lesserLimit;
@@ -37,6 +41,10 @@ public class Interval {
             this.lesserLimit = limit;
             this.largerLimit = limit;
         }
+    }
+
+    public static Interval between(Point limit, Point anotherLimit) {
+        return newInstance(limit, anotherLimit);
     }
 
     public static Interval newInstance(Point limit, Point anotherLimit) {
@@ -195,7 +203,7 @@ public class Interval {
         Set<Point> pointSet = new HashSet<>(2 + 1, 1.0f);
         pointSet.add(lesserLimit);
         pointSet.add(largerLimit);
-        return pointSet;
+        return Collections.unmodifiableSet(pointSet);
     }
 
 

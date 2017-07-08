@@ -1,5 +1,6 @@
 package com.paniclab.amalgama;
 
+import javax.naming.OperationNotSupportedException;
 import java.math.BigDecimal;
 import java.util.Objects;
 
@@ -10,6 +11,7 @@ import static com.paniclab.amalgama.Util.isNot;
  * Плюс и минус бесконечности, а также точка "ноль" представлены специальными константами. Согласно контракта, точка
  * "плюс бесконечность" всегда больше любой другой точки, точка "минус бесконечность" всегда меньше любой другой точки.
  * Две плюс бесконечности или две минус бесконечности равны между собой.
+ * Попытка зывать метод value() для бесконечной точки приводит к возбуждению исключения PointException.
  * Экземпляры класса неизменяемы, их использование в многопоточной среде безопасно.
  */
 public class Point implements Valuable<BigDecimal>, Comparable<Point> {
@@ -27,7 +29,12 @@ public class Point implements Valuable<BigDecimal>, Comparable<Point> {
     }
 
     private Point(String str) {
-        value = new BigDecimal(str);
+        try {
+            value = new BigDecimal(str);
+        } catch (NumberFormatException ex) {
+            throw new PointException("Ощибка при создании объекта Point - не удалось интерпретировать вводимые " +
+                    "данные.", ex);
+        }
     }
 
     private Point(BigDecimal val) {
@@ -50,6 +57,7 @@ public class Point implements Valuable<BigDecimal>, Comparable<Point> {
 
     @Override
     public BigDecimal value() {
+        if(this.isInfinity()) throw new PointException("Попытка получить значение координаты бесконечности");
         return value;
     }
 
@@ -111,7 +119,11 @@ public class Point implements Valuable<BigDecimal>, Comparable<Point> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(value().hashCode(), infinityFlag);
+        if (this.isInfinity()) {
+            return Objects.hash(Point.ZERO, infinityFlag);
+        } else {
+            return Objects.hash(value());
+        }
     }
 
 

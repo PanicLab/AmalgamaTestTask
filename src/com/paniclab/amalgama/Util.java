@@ -32,7 +32,7 @@ public final class Util {
             case BOTH_INTERVALS_IS_NOT_ZERO_LENGTH: {
                 Point x = iterator.next();
                 Point y = iterator.next();
-                return Interval.newInstance(x, y);
+                return Interval.between(x, y);
             }
             case ONE_INTERVAL_IS_ZERO_LENGTH: {
                 return first.hasZeroLength() ? first : second;
