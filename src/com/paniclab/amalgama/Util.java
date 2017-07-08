@@ -23,13 +23,13 @@ public final class Util {
         pointSet.removeAll(extremePoints);
 
         int behavior = pointSet.size();
-        final int BOTH_INTERVALS_IS_NOT_ZERO_LENGTH = 2;
+        final int BOTH_INTERVALS_IS_NOT_ZERO_LENGTH_AND_NOT_EQUALS = 2;
         final int ONE_INTERVAL_IS_ZERO_LENGTH = 1;
-        final int BOTH_INTERVALS_IS_ZERO_LENGTH = 0;
+        final int BOTH_INTERVALS_IS_NOT_EQUALS_ZERO_LENGTH = 0;
 
-        Iterator<Point> iterator = pointSet.iterator();
         switch (behavior) {
-            case BOTH_INTERVALS_IS_NOT_ZERO_LENGTH: {
+            case BOTH_INTERVALS_IS_NOT_ZERO_LENGTH_AND_NOT_EQUALS: {
+                Iterator<Point> iterator = pointSet.iterator();
                 Point x = iterator.next();
                 Point y = iterator.next();
                 return Interval.between(x, y);
@@ -37,7 +37,7 @@ public final class Util {
             case ONE_INTERVAL_IS_ZERO_LENGTH: {
                 return first.hasZeroLength() ? first : second;
             }
-            case BOTH_INTERVALS_IS_ZERO_LENGTH: {
+            case BOTH_INTERVALS_IS_NOT_EQUALS_ZERO_LENGTH: {
                 return first;
             }
             default: {
@@ -64,6 +64,8 @@ public final class Util {
             }
         }
         Collection<T> result = new ArrayList<>(2);
+        if(min == null || max == null) throw new InternalError("Непредвиденная ошибка при обработке экстремальных " +
+                "значений набора точек двух отрезков. Обратитесь к разработчику.");
         result.add(min);
         result.add(max);
         return result;
