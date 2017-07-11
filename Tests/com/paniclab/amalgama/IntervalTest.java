@@ -551,7 +551,7 @@ public class IntervalTest {
     }
 
     @Test
-    public void hasSuperpositionWith_twoRandomIntervalsThatHasSuperposition_returnTrue() throws Exception {
+    public void isOverlapsWith_twoRandomIntervalsThatHasSuperposition_returnTrue() throws Exception {
         Point x1 = Point.valueOf(100);
         Point y1 = Point.valueOf(140);
         Interval intervalOne = Interval.between(x1, y1);
@@ -560,12 +560,12 @@ public class IntervalTest {
         Point y2 = Point.valueOf(200);
         Interval intervalTwo = Interval.between(x2, y2);
 
-        assertTrue(intervalOne.hasSuperpositionWith(intervalTwo));
-        assertTrue(intervalTwo.hasSuperpositionWith(intervalOne));
+        assertTrue(intervalOne.isOverlapsWith(intervalTwo));
+        assertTrue(intervalTwo.isOverlapsWith(intervalOne));
     }
 
     @Test
-    public void hasSuperpositionWith_twoRandomIntervalsThatHasNoSuperposition_returnFalse() throws Exception {
+    public void isOverlapsWith_twoRandomIntervalsThatHasNoSuperposition_returnFalse() throws Exception {
         Point x1 = Point.valueOf(100);
         Point y1 = Point.valueOf(140);
         Interval intervalOne = Interval.between(x1, y1);
@@ -574,12 +574,12 @@ public class IntervalTest {
         Point y2 = Point.valueOf(200);
         Interval intervalTwo = Interval.between(x2, y2);
 
-        assertFalse(intervalOne.hasSuperpositionWith(intervalTwo));
-        assertFalse(intervalTwo.hasSuperpositionWith(intervalOne));
+        assertFalse(intervalOne.isOverlapsWith(intervalTwo));
+        assertFalse(intervalTwo.isOverlapsWith(intervalOne));
     }
 
     @Test
-    public void hasSuperpositionWith_twoRandomIntervalsAndOneContainsAnother_returnTrue() throws Exception {
+    public void isOverlapsWith_twoRandomIntervalsAndOneContainsAnother_returnTrue() throws Exception {
         Point x1 = Point.valueOf(100);
         Point y1 = Point.valueOf(200);
         Interval intervalOne = Interval.between(x1, y1);
@@ -588,12 +588,12 @@ public class IntervalTest {
         Point y2 = Point.valueOf(199);
         Interval intervalTwo = Interval.between(x2, y2);
 
-        assertTrue(intervalOne.hasSuperpositionWith(intervalTwo));
-        assertTrue(intervalTwo.hasSuperpositionWith(intervalOne));
+        assertTrue(intervalOne.isOverlapsWith(intervalTwo));
+        assertTrue(intervalTwo.isOverlapsWith(intervalOne));
     }
 
     @Test
-    public void hasSuperpositionWith_infiniteAndRandomIntervals_returnTrue() throws Exception {
+    public void isOverlapsWith_infiniteAndRandomIntervals_returnTrue() throws Exception {
         Point x1 = Point.NEGATIVE_INFINITY;
         Point y1 = Point.POSITIVE_INFINITY;
         Interval intervalOne = Interval.between(x1, y1);
@@ -602,7 +602,91 @@ public class IntervalTest {
         Point y2 = Point.valueOf(199);
         Interval intervalTwo = Interval.between(x2, y2);
 
-        assertTrue(intervalOne.hasSuperpositionWith(intervalTwo));
-        assertTrue(intervalTwo.hasSuperpositionWith(intervalOne));
+        assertTrue(intervalOne.isOverlapsWith(intervalTwo));
+        assertTrue(intervalTwo.isOverlapsWith(intervalOne));
+    }
+
+    @Test
+    public void isOverlapsWith_twoRandomNeighborsIntervals_symmetric_returnTrue() throws Exception {
+        Point x1 = Point.valueOf(100);
+        Point y1 = Point.valueOf(200);
+        Interval intervalOne = Interval.between(x1, y1);
+
+        Point x2 = Point.valueOf(200);
+        Point y2 = Point.valueOf(220);
+        Interval intervalTwo = Interval.between(x2, y2);
+
+        assertTrue(intervalOne.isNeighborsWith(intervalTwo));
+        assertTrue(intervalOne.isOverlapsWith(intervalTwo));
+        assertTrue(intervalTwo.isOverlapsWith(intervalOne));
+    }
+
+    @Test(expected = IntervalException.class)
+    public void mergeWith_twoNotOverlappedIntervals_throwIntervalException() throws Exception {
+        Point x1 = Point.valueOf(100);
+        Point y1 = Point.valueOf(200);
+        Interval intervalOne = Interval.between(x1, y1);
+
+        Point x2 = Point.valueOf(201);
+        Point y2 = Point.valueOf(220);
+        Interval intervalTwo = Interval.between(x2, y2);
+
+        Interval third = intervalOne.mergeWith(intervalTwo);
+    }
+
+    @Test
+    public void mergeWith_twoNeighborIntervals_returnNewCombinedInterval() throws Exception {
+        Point x1 = Point.valueOf(100);
+        Point y1 = Point.valueOf(200);
+        Interval intervalOne = Interval.between(x1, y1);
+
+        Point x2 = Point.valueOf(200);
+        Point y2 = Point.valueOf(220);
+        Interval intervalTwo = Interval.between(x2, y2);
+
+        Interval expected = Interval.between(x1, y2);
+        assertEquals(expected, intervalOne.mergeWith(intervalTwo));
+    }
+
+    @Test
+    public void mergeWith_twoNotNeighborsOverlappedIntervals_returnNewCombinedInterval() throws Exception {
+        Point x1 = Point.valueOf(100);
+        Point y1 = Point.valueOf(200);
+        Interval intervalOne = Interval.between(x1, y1);
+
+        Point x2 = Point.valueOf(180);
+        Point y2 = Point.valueOf(220);
+        Interval intervalTwo = Interval.between(x2, y2);
+
+        Interval expected = Interval.between(x1, y2);
+        assertEquals(expected, intervalOne.mergeWith(intervalTwo));
+    }
+
+    @Test
+    public void mergeWith_twoEqualsZeroLengthIntervals_returnEqualToBoth() throws Exception {
+        Point x1 = Point.valueOf(100);
+        Point y1 = Point.valueOf(100);
+        Interval intervalOne = Interval.between(x1, y1);
+
+        Point x2 = Point.valueOf(100);
+        Point y2 = Point.valueOf(100);
+        Interval intervalTwo = Interval.between(x2, y2);
+
+        Interval expected = Interval.between(x1, y2);
+        assertEquals(expected, intervalOne.mergeWith(intervalTwo));
+    }
+
+    @Test
+    public void mergeWith_twoRandomIntervalsOneContainsAnother_throwException() throws Exception {
+        Point x1 = Point.valueOf(100);
+        Point y1 = Point.valueOf(200);
+        Interval intervalOne = Interval.between(x1, y1);
+
+        Point x2 = Point.valueOf(120);
+        Point y2 = Point.valueOf(140);
+        Interval intervalTwo = Interval.between(x2, y2);
+
+        Interval expected = Interval.between(x1, y1);
+        assertEquals(expected, intervalOne.mergeWith(intervalTwo));
     }
 }
