@@ -85,28 +85,21 @@ public class Subset {
 
             Point examinePoint;
             examinePoint = interval.lesserLimit();
-            //table.put(examinePoint, interval);
+
+            Point nearestFromLeft;
+            nearestFromLeft = table.lowerKey(examinePoint);
 
             Interval intervalThatPotentiallyCanContainOurExaminePoint;
-            Point nearestFromLeft, nearestFromRight;
-            nearestFromLeft = table.lowerKey(examinePoint);
             Interval intervalThatContainsOurExaminePoint;
             if(isNot(nearestFromLeft == null)) {
                 intervalThatPotentiallyCanContainOurExaminePoint = table.get(nearestFromLeft);
 
-                boolean ourLesserIsIn = false;
                 if (intervalThatPotentiallyCanContainOurExaminePoint.isContains(interval.lesserLimit())) {
-                    if (normalizeMode == Mode.THROW) {
-                        throw new NotNormalizedSubsetException("Попытка создания подмножества (объекта Subset) из отрезков" +
-                                "и/или интервалов, перекрывающих друг друга. Проверьте правильность ввода, или измените " +
-                                "режим объекта Builder при создании для нормализации подмнеожества");
-                    }
-                    ourLesserIsIn = true;
+                    checkThrowOrProceedRegardingTo(normalizeMode);
                     intervalThatContainsOurExaminePoint = intervalThatPotentiallyCanContainOurExaminePoint;
                     table.remove(intervalThatContainsOurExaminePoint.lesserLimit());
                     table.remove(intervalThatContainsOurExaminePoint.largerLimit());
                     interval = interval.mergeWith(intervalThatContainsOurExaminePoint);
-                    nearestFromLeft = null;
                 }
             }
 
@@ -115,11 +108,7 @@ public class Subset {
             if(isNot(nearestFromLeft == null)) {
                 intervalThatPotentiallyCanContainOurExaminePoint = table.get(nearestFromLeft);
                 if (intervalThatPotentiallyCanContainOurExaminePoint.isContains(interval.largerLimit())) {
-                    if (normalizeMode == Mode.THROW) {
-                        throw new NotNormalizedSubsetException("Попытка создания подмножества (объекта Subset) из отрезков" +
-                                "и/или интервалов, перекрывающих друг друга. Проверьте правильность ввода, или измените " +
-                                "режим объекта Builder при создании для нормализации подмнеожества");
-                    }
+                    checkThrowOrProceedRegardingTo(normalizeMode);
                     intervalThatContainsOurExaminePoint = intervalThatPotentiallyCanContainOurExaminePoint;
                     table.remove(intervalThatContainsOurExaminePoint.lesserLimit());
                     table.remove(intervalThatContainsOurExaminePoint.largerLimit());
@@ -130,13 +119,22 @@ public class Subset {
             table.put(interval.largerLimit(), interval);
 
             nearestFromLeft = table.lowerKey(interval.largerLimit());
-            if(isNot(nearestFromLeft == null)) {
+            if(isNot(nearestFromLeft == null) && isNot(interval.hasZeroLength())) {
                 while(isNot(nearestFromLeft.equals(interval.lesserLimit()))) {
+                    checkThrowOrProceedRegardingTo(normalizeMode);
                     table.remove(nearestFromLeft);
                     nearestFromLeft = table.lowerKey(interval.largerLimit());
                 }
             }
 
+        }
+
+        private void checkThrowOrProceedRegardingTo(Mode mode) {
+            if (mode == Mode.THROW) {
+                throw new NotNormalizedSubsetException("Попытка создания подмножества (объекта Subset) из" +
+                        "отрезков и/или полуинтервалов, перекрывающих друг друга. Проверьте правильность ввода," +
+                        " или измените режим объекта Builder при создании для нормализации подмнеожества");
+            }
         }
 
         public Subset create() {
