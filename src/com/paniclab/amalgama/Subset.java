@@ -25,13 +25,6 @@ public class Subset {
         this.pointSet = Collections.unmodifiableNavigableSet(table.navigableKeySet());
     }
 
-/*    private Set<Point> createPointSet() {
-        Set<Point> points = new HashSet<>(getIntervals().size()*2 + 1, 1.0f);
-        for (Interval interval : getIntervals()) {
-            points.addAll(interval.getLimits());
-        }
-        return Collections.unmodifiableSet(points);
-    }*/
 
     public static Builder builder() {
         return new Builder();
@@ -82,39 +75,25 @@ public class Subset {
         }
 
         private void normalizeAndAdd(Interval interval) {
-
-            Point examinePoint;
-            examinePoint = interval.lesserLimit();
-
             Point nearestFromLeft;
-            nearestFromLeft = table.lowerKey(examinePoint);
+            for(Point examinePoint: interval.getLimits()) {
+                nearestFromLeft = table.lowerKey(examinePoint);
 
-            Interval intervalThatPotentiallyCanContainOurExaminePoint;
-            Interval intervalThatContainsOurExaminePoint;
-            if(isNot(nearestFromLeft == null)) {
-                intervalThatPotentiallyCanContainOurExaminePoint = table.get(nearestFromLeft);
+                Interval intervalThatPotentiallyCanContainOurExaminePoint;
+                Interval intervalThatContainsOurExaminePoint;
+                if (isNot(nearestFromLeft == null)) {
+                    intervalThatPotentiallyCanContainOurExaminePoint = table.get(nearestFromLeft);
 
-                if (intervalThatPotentiallyCanContainOurExaminePoint.isContains(interval.lesserLimit())) {
-                    checkThrowOrProceedRegardingTo(normalizeMode);
-                    intervalThatContainsOurExaminePoint = intervalThatPotentiallyCanContainOurExaminePoint;
-                    table.remove(intervalThatContainsOurExaminePoint.lesserLimit());
-                    table.remove(intervalThatContainsOurExaminePoint.largerLimit());
-                    interval = interval.mergeWith(intervalThatContainsOurExaminePoint);
+                    if (intervalThatPotentiallyCanContainOurExaminePoint.isContains(examinePoint)) {
+                        checkThrowOrProceedRegardingTo(normalizeMode);
+                        intervalThatContainsOurExaminePoint = intervalThatPotentiallyCanContainOurExaminePoint;
+                        table.remove(intervalThatContainsOurExaminePoint.lesserLimit());
+                        table.remove(intervalThatContainsOurExaminePoint.largerLimit());
+                        interval = interval.mergeWith(intervalThatContainsOurExaminePoint);
+                    }
                 }
             }
 
-            examinePoint = interval.largerLimit();
-            nearestFromLeft = table.lowerKey(examinePoint);
-            if(isNot(nearestFromLeft == null)) {
-                intervalThatPotentiallyCanContainOurExaminePoint = table.get(nearestFromLeft);
-                if (intervalThatPotentiallyCanContainOurExaminePoint.isContains(interval.largerLimit())) {
-                    checkThrowOrProceedRegardingTo(normalizeMode);
-                    intervalThatContainsOurExaminePoint = intervalThatPotentiallyCanContainOurExaminePoint;
-                    table.remove(intervalThatContainsOurExaminePoint.lesserLimit());
-                    table.remove(intervalThatContainsOurExaminePoint.largerLimit());
-                    interval = interval.mergeWith(intervalThatContainsOurExaminePoint);
-                }
-            }
             table.put(interval.lesserLimit(), interval);
             table.put(interval.largerLimit(), interval);
 
@@ -126,8 +105,8 @@ public class Subset {
                     nearestFromLeft = table.lowerKey(interval.largerLimit());
                 }
             }
-
         }
+
 
         private void checkThrowOrProceedRegardingTo(Mode mode) {
             if (mode == Mode.THROW) {
