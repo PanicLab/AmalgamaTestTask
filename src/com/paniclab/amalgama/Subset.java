@@ -1,5 +1,6 @@
 package com.paniclab.amalgama;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 import static com.paniclab.amalgama.Util.isNot;
@@ -46,6 +47,37 @@ public class Subset {
 
     public int size() {
         return intervalSet.size();
+    }
+
+    public boolean isNotEmpty() {
+        return this != EMPTY;
+    }
+
+    public Point getNearestOrElse(Point specifiedPoint) {
+        if(this == EMPTY) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("Попытка обращения к пустому подмножеству").append(System.lineSeparator());
+            sb.append(this.toString());
+            sb.append("Заданная точка:").append(System.lineSeparator());
+            sb.append(specifiedPoint.toString()).append(System.lineSeparator());
+            throw new IllegalStateException(sb.toString());
+        }
+        Point nearestLeft, nearestRight;
+        nearestLeft = table.lowerKey(specifiedPoint);
+        if(isNot(nearestLeft == null)) {
+            if (table.get(nearestLeft).isContains(specifiedPoint)) return specifiedPoint;
+        }
+        nearestRight = table.higherKey(specifiedPoint);
+        if(isNot(nearestRight == null)) {
+            if (table.get(nearestRight).isContains(specifiedPoint)) return specifiedPoint;
+            if (nearestLeft == null) return nearestRight;
+        }
+        if(isNot(nearestLeft == null) && nearestRight == null) return nearestLeft;
+
+        BigDecimal left = nearestLeft.value().subtract(specifiedPoint.value()).abs();
+        BigDecimal right = nearestRight.value().subtract(specifiedPoint.value()).abs();
+
+        return  (left.compareTo(right) <= 0) ? nearestLeft: nearestRight;
     }
 
 

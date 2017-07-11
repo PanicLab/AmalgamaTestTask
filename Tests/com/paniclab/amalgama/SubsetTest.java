@@ -343,4 +343,81 @@ public class SubsetTest {
         assertNotNull(subset);
         assertTrue(subset.size() == 2);
     }
+
+    @Test
+    public void isNotEmpty_subsetIsEmpty_returnFalse() throws Exception {
+        Subset subset = Subset.EMPTY;
+        assertFalse(subset.isNotEmpty());
+    }
+
+    @Test
+    public void isNotEmpty_subsetIsNotEmpty_returnTrue() throws Exception {
+        Point x1 = Point.valueOf(-1000);
+        Point y1 = Point.valueOf(-100);
+        Interval intervalOne = Interval.between(x1, y1);
+
+        Subset subset = Subset.builder(Subset.Mode.NORMALIZE)
+                                .addInterval(intervalOne)
+                                .create();
+
+        assertTrue(subset.isNotEmpty());
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void getNearestOrElse_subsetIsEmptyPointIsRandom_throwIllegalStateException() throws Exception {
+        Subset subset = Subset.EMPTY;
+        Point point = Point.valueOf(10);
+
+        subset.getNearestOrElse(point);
+    }
+
+    @Test
+    public void getNearestOrElse_subsetIsNotEmptyPointIsRandomAndIsIn_returnPoint() throws Exception {
+        Point x1 = Point.valueOf(-1000);
+        Point y1 = Point.valueOf(100);
+        Interval intervalOne = Interval.between(x1, y1);
+
+        Subset subset = Subset.builder(Subset.Mode.NORMALIZE)
+                .addInterval(intervalOne)
+                .create();
+
+        Point specifiedPoint = Point.valueOf(99);
+
+        Point expected = subset.getNearestOrElse(specifiedPoint);
+        assertEquals(expected, specifiedPoint);
+    }
+
+    @Test
+    public void getNearestOrElse_subsetIsNotEmptyPointIsRandomAndIsOut_returnNearest() throws Exception {
+        Point x1 = Point.valueOf(-1000);
+        Point y1 = Point.valueOf(100);
+        Interval intervalOne = Interval.between(x1, y1);
+
+        Subset subset = Subset.builder(Subset.Mode.NORMALIZE)
+                .addInterval(intervalOne)
+                .create();
+
+        Point specifiedPoint = Point.valueOf(105);
+
+        Point expected = intervalOne.largerLimit();
+        Point result = subset.getNearestOrElse(specifiedPoint);
+        assertEquals(expected, result);
+    }
+
+    @Test
+    public void getNearestOrElse_subsetIsNotEmptyPointIsInfinityAndIsOut_returnNearest() throws Exception {
+        Point x1 = Point.valueOf(-1000);
+        Point y1 = Point.valueOf(100);
+        Interval intervalOne = Interval.between(x1, y1);
+
+        Subset subset = Subset.builder(Subset.Mode.NORMALIZE)
+                .addInterval(intervalOne)
+                .create();
+
+        Point specifiedPoint = Point.NEGATIVE_INFINITY;
+
+        Point expected = intervalOne.lesserLimit();
+        Point result = subset.getNearestOrElse(specifiedPoint);
+        assertEquals(expected, result);
+    }
 }
