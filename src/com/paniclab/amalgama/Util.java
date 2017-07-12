@@ -12,7 +12,7 @@ public final class Util {
 
 
     public static Interval getSuperpositionOf(Interval first, Interval second) {
-        if(isNot(first.hasSuperpositionWith(second))) return null;
+        if(isNot(first.isOverlapsWith(second))) return null;
         if(first.equals(second)) return first;
 
         Set<Point> pointSet = new HashSet<>(4+1, 1.0f);

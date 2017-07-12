@@ -19,6 +19,8 @@ import static com.paniclab.amalgama.Util.isNot;
  * экземпляров класса Point. В случае отрезка нулевой длины метод возвращает Set, состоящий из одного экземпляра класса
  * Point.
  * Экземпляры класса неизменяемы, их использование в многопоточной среде безопасно.
+ * Метод IsOverlapsWith() возвращает true, если два отрезка содержат один другой, примыкают друг к другу или
+ * накладываются один на другой.
  */
 public class Interval {
     private Point lesserLimit;
@@ -155,7 +157,7 @@ public class Interval {
     }
 
 
-    public boolean isIncludedTo(Interval other) {
+    public boolean isIncludedBy(Interval other) {
         if(this.lesserLimit().lessThen(other.lesserLimit())) return false;
         if(this.lesserLimit().moreThen(other.largerLimit())) return false;
         if(this.largerLimit().lessThen(other.lesserLimit())) return false;
@@ -181,7 +183,7 @@ public class Interval {
         return true;
     }
 
-    public boolean hasSuperpositionWith(Interval another) {
+    public boolean isOverlapsWith(Interval another) {
         return this.lesserLimit().isBelongsTo(another) ||
                 this.largerLimit().isBelongsTo(another) ||
                 another.lesserLimit().isBelongsTo(this) ||
@@ -206,6 +208,26 @@ public class Interval {
         return Collections.unmodifiableSet(pointSet);
     }
 
+    public Interval mergeWith(Interval other) {
+        if(isNot(this.isOverlapsWith(other))) throw new IntervalException("Ошибка при попытке слить два отрезка, " +
+                "не имеющих наложения друг на друга");
+
+        Point newLesserLimit;
+        Point newLargerLimit;
+        if(this.lesserLimit().lessThenOrEquals(other.lesserLimit())) {
+            newLesserLimit = this.lesserLimit();
+        } else {
+            newLesserLimit = other.lesserLimit();
+        }
+        if(this.largerLimit().moreThenOrEquals(other.largerLimit())) {
+            newLargerLimit = this.largerLimit();
+        } else {
+            newLargerLimit = other.largerLimit();
+        }
+
+        return Interval.between(newLesserLimit, newLargerLimit);
+    }
+
 
     @Override
     public int hashCode() {
@@ -223,5 +245,23 @@ public class Interval {
         Interval other = (Interval) obj;
         return this.largerLimit.equals(other.largerLimit) &&
                 this.lesserLimit.equals(other.lesserLimit);
+    }
+
+    @Override
+    public String toString() {
+        String lesser;
+        String larger;
+        if(lesserLimit.isNegativeInfinity()) {
+            lesser = "NEGATIVE INFINITY";
+        } else {
+            lesser = lesserLimit.value().toString();
+        }
+        if(largerLimit.isPositiveInfinity()) {
+            larger = "POSITIVE INFINITY";
+        } else {
+            larger = largerLimit.value().toString();
+        }
+
+        return "Interval(" + lesser + ", " + larger + ") @" + hashCode();
     }
 }

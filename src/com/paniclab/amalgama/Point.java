@@ -140,6 +140,15 @@ public class Point implements Valuable<BigDecimal>, Comparable<Point> {
 
 
     @Override
+    public String toString() {
+        if (isInfinity()) {
+            return "Объект Point: value = " + infinityFlag;
+        }
+        return "Объект Point: value = " + value();
+    }
+
+
+    @Override
     public int compareTo(Point other) {
         if(this == other) return 0;
         if(this.isInfinity()) {
