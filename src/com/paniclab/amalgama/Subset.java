@@ -62,6 +62,7 @@ public class Subset {
             sb.append(specifiedPoint.toString()).append(System.lineSeparator());
             throw new IllegalStateException(sb.toString());
         }
+
         Point nearestLeft, nearestRight;
         nearestLeft = table.lowerKey(specifiedPoint);
         if(isNot(nearestLeft == null)) {
@@ -102,11 +103,11 @@ public class Subset {
         }
 
         public Builder addInterval(Interval interval) {
-            normalizeAndAdd(interval);
+            addWithRegardingToMode(interval);
             return this;
         }
 
-        private void normalizeAndAdd(Interval interval) {
+        private void addWithRegardingToMode(Interval interval) {
             Point nearestFromLeft;
             for(Point examinePoint: interval.getLimits()) {
                 nearestFromLeft = table.lowerKey(examinePoint);

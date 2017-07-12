@@ -420,4 +420,63 @@ public class SubsetTest {
         Point result = subset.getNearestOrElse(specifiedPoint);
         assertEquals(expected, result);
     }
+
+    @Test
+    public void getNearestOrElse_subsetIsNotEmptyPointIsInfinityAndIsIn_returnPoint() throws Exception {
+        Point x1 = Point.valueOf(-1000);
+        Point y1 = Point.POSITIVE_INFINITY;
+        Interval intervalOne = Interval.between(x1, y1);
+
+        Subset subset = Subset.builder(Subset.Mode.NORMALIZE)
+                .addInterval(intervalOne)
+                .create();
+
+        Point specifiedPoint = Point.POSITIVE_INFINITY;
+        Point result = subset.getNearestOrElse(specifiedPoint);
+        assertEquals(specifiedPoint, result);
+    }
+
+    @Test
+    public void getNearestOrElse_subsetHasTwoIntervalsPointIsRandomAndBetween_returnNearest() throws Exception {
+
+        Point x1 = Point.valueOf(-1000);
+        Point y1 = Point.valueOf(-100);
+        Interval intervalOne = Interval.between(x1, y1);
+
+        Point x2 = Point.valueOf(150);
+        Point y2 = Point.valueOf(200);
+        Interval intervalTwo = Interval.between(x2, y2);
+
+        Subset subset = Subset.builder(Subset.Mode.NORMALIZE)
+                .addInterval(intervalOne)
+                .addInterval(intervalTwo)
+                .create();
+
+        Point specifiedPoint = Point.valueOf(1);
+        Point expected = Point.valueOf(-100);
+        Point result = subset.getNearestOrElse(specifiedPoint);
+        assertEquals(expected, result);
+    }
+
+    @Test
+    public void getNearestOrElse_subsetHasTwoIntervalsPointIsRandomAndSmallest_returnNearest() throws Exception {
+
+        Point x1 = Point.valueOf(-1000);
+        Point y1 = Point.valueOf(-100);
+        Interval intervalOne = Interval.between(x1, y1);
+
+        Point x2 = Point.valueOf(150);
+        Point y2 = Point.valueOf(200);
+        Interval intervalTwo = Interval.between(x2, y2);
+
+        Subset subset = Subset.builder(Subset.Mode.NORMALIZE)
+                .addInterval(intervalOne)
+                .addInterval(intervalTwo)
+                .create();
+
+        Point specifiedPoint = Point.valueOf(-1010);
+        Point expected = Point.valueOf(-1000);
+        Point result = subset.getNearestOrElse(specifiedPoint);
+        assertEquals(expected, result);
+    }
 }
