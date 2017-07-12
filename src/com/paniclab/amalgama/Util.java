@@ -49,6 +49,7 @@ public final class Util {
 
 
     public static <T extends Comparable<T>> Collection<T> getMinAndMaxElementsOf(Collection<T> collection) {
+        if(collection.isEmpty()) return null;
         T min = null;
         T max = null;
         Iterator<T> iterator = collection.iterator();
