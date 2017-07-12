@@ -107,6 +107,12 @@ public class Subset {
             return this;
         }
 
+        void add(Set<Interval> intervalSet) {
+            for (Interval interval : intervalSet) {
+                addWithRegardingToMode(interval);
+            }
+        }
+
         private void addWithRegardingToMode(Interval interval) {
             Point nearestFromLeft;
             for(Point examinePoint: interval.getLimits()) {
@@ -155,6 +161,15 @@ public class Subset {
 
         public boolean isEmpty() {
             return table.isEmpty();
+        }
+
+        Set<Interval> getIntervals() {
+            return new HashSet<>(table.values());
+        }
+
+        void remove(Interval interval) {
+            table.remove(interval.lesserLimit());
+            table.remove(interval.largerLimit());
         }
     }
 

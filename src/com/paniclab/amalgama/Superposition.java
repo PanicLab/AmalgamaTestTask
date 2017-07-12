@@ -3,13 +3,14 @@ package com.paniclab.amalgama;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Сергей on 12.07.2017.
  */
 public class Superposition {
     private List<Subset> subsetList;
-    private Subset superposition;
+    private Subset.Builder builder = Subset.builder();
 
     private Superposition() {}
 
@@ -31,9 +32,26 @@ public class Superposition {
         return new Builder();
     }
 
-    public Subset calculate() {
+    public Subset resolve() {
         if (subsetList.isEmpty()) return Subset.EMPTY;
-        return null;
+        if (subsetList.size() == 1) return subsetList.get(0);
+
+        for (Interval interval : subsetList.get(0).getIntervals()) {
+            builder.add(interval);
+        }
+
+        for(int i = 1; i < subsetList.size(); i++) {
+            Subset currentSubset = subsetList.get(i);
+
+            Subset.Builder temp = Subset.builder();
+            for (Interval interval : builder.getIntervals()) {
+                Set<Interval> newSuperposition = interval.getSuperposition(currentSubset);
+                temp.add(newSuperposition);
+            }
+            builder = temp;
+        }
+
+        return builder.create();
     }
 
 
@@ -42,7 +60,7 @@ public class Superposition {
 
         private Builder() {}
 
-        public Builder addSubset(Subset subset) {
+        public Builder add(Subset subset) {
             subsetList.add(subset);
             return this;
         }
