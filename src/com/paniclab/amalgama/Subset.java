@@ -102,7 +102,7 @@ public class Subset {
             this.normalizeMode = mode;
         }
 
-        public Builder addInterval(Interval interval) {
+        public Builder add(Interval interval) {
             addWithRegardingToMode(interval);
             return this;
         }
@@ -151,6 +151,10 @@ public class Subset {
 
         public Subset create() {
             return table.isEmpty() ? Subset.EMPTY : new Subset(this);
+        }
+
+        public boolean isEmpty() {
+            return table.isEmpty();
         }
     }
 

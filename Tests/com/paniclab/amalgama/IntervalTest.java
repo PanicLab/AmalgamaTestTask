@@ -689,4 +689,120 @@ public class IntervalTest {
         Interval expected = Interval.between(x1, y1);
         assertEquals(expected, intervalOne.mergeWith(intervalTwo));
     }
+
+    @Test
+    public void getSuperposition_twoRandomOverlappedIntervals_returnNewInterval() throws Exception {
+        Point x1 = Point.valueOf(-1000);
+        Point y1 = Point.valueOf(-100);
+        Interval intervalOne = Interval.between(x1, y1);
+
+        Point x2 = Point.valueOf(-200);
+        Point y2 = Point.valueOf(200);
+        Interval intervalTwo = Interval.between(x2, y2);
+
+        Interval expected = Interval.between(x2, y1);
+        Interval result = intervalOne.getSuperposition(intervalTwo);
+        assertEquals(expected, result);
+    }
+
+    @Test(expected = IntervalException.class)
+    public void getSuperposition_twoRandomNotOverlappedIntervals_throwIntervalException() throws Exception {
+        Point x1 = Point.valueOf(-1000);
+        Point y1 = Point.valueOf(-100);
+        Interval intervalOne = Interval.between(x1, y1);
+
+        Point x2 = Point.valueOf(200);
+        Point y2 = Point.valueOf(400);
+        Interval intervalTwo = Interval.between(x2, y2);
+
+        Interval result = intervalOne.getSuperposition(intervalTwo);
+    }
+
+    @Test
+    public void getSuperposition_subsetWithTwoRandomIntrvlsIntrvlOverlappedBoth_returnSetSized2() throws Exception {
+        Point x1 = Point.valueOf(200);
+        Point y1 = Point.valueOf(400);
+        Interval intervalOne = Interval.between(x1, y1);
+
+        Point x2 = Point.valueOf(600);
+        Point y2 = Point.valueOf(800);
+        Interval intervalTwo = Interval.between(x2, y2);
+
+        Subset subset = Subset.builder(Subset.Mode.NORMALIZE)
+                                .add(intervalOne)
+                                .add(intervalTwo)
+                                .create();
+
+        Point xx = Point.valueOf(350);
+        Point yy = Point.valueOf(650);
+        Interval specifiedInterval = Interval.between(xx, yy);
+
+        Set<Interval> result = specifiedInterval.getSuperposition(subset);
+
+        Point xx1 = Point.valueOf(350);
+        Point yy1 = Point.valueOf(400);
+        Interval otherIntervalOne = Interval.between(xx1, yy1);
+
+        Point xx2 = Point.valueOf(600);
+        Point yy2 = Point.valueOf(650);
+        Interval otherIntervalTwo = Interval.between(xx2, yy2);
+
+        Set<Interval> expected = new HashSet<>();
+        expected.add(otherIntervalOne);
+        expected.add(otherIntervalTwo);
+
+        assertEquals(expected, result);
+    }
+
+    @Test
+    public void getSuperposition_subsetWithTwoRandomIntrvlsIntrvlNotOverlappedBoth_returnEmptySet() throws Exception {
+        Point x1 = Point.valueOf(200);
+        Point y1 = Point.valueOf(400);
+        Interval intervalOne = Interval.between(x1, y1);
+
+        Point x2 = Point.valueOf(600);
+        Point y2 = Point.valueOf(800);
+        Interval intervalTwo = Interval.between(x2, y2);
+
+        Subset subset = Subset.builder(Subset.Mode.NORMALIZE)
+                .add(intervalOne)
+                .add(intervalTwo)
+                .create();
+
+        Point xx = Point.valueOf(450);
+        Point yy = Point.valueOf(500);
+        Interval specifiedInterval = Interval.between(xx, yy);
+
+        Set<Interval> result = specifiedInterval.getSuperposition(subset);
+        Set<Interval> expected = new HashSet<>();
+
+        assertEquals(expected, result);
+    }
+
+    @Test
+    public void getSuperposition_subsetWithTwoRandomIntrvlsAndIntrvlIsIncludedByOne_returnSetSized1() throws Exception {
+        Point x1 = Point.valueOf(200);
+        Point y1 = Point.valueOf(400);
+        Interval intervalOne = Interval.between(x1, y1);
+
+        Point x2 = Point.valueOf(600);
+        Point y2 = Point.valueOf(800);
+        Interval intervalTwo = Interval.between(x2, y2);
+
+        Subset subset = Subset.builder(Subset.Mode.NORMALIZE)
+                .add(intervalOne)
+                .add(intervalTwo)
+                .create();
+
+        Point xx = Point.valueOf(700);
+        Point yy = Point.valueOf(750);
+        Interval specifiedInterval = Interval.between(xx, yy);
+
+        Set<Interval> result = specifiedInterval.getSuperposition(subset);
+
+        Set<Interval> expected = new HashSet<>();
+        expected.add(specifiedInterval);
+
+        assertEquals(expected, result);
+    }
 }

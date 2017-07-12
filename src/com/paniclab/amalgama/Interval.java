@@ -9,9 +9,9 @@ import static com.paniclab.amalgama.Util.isNot;
  * Created by Сергей on 04.07.2017.
  * Класс представляет собой абстракцию одного из отрезков подмножества.
  * Экземпляр класса создается методами статической генерации:
- *                  newInstance(Point, Point);
  *                  between(Point, Point);
- * Последний за кулисами просто вызывает newInstance(Point, Point).
+ *                  newInstance(Point, Point);
+ * Последний за кулисами просто вызывает between(Point, Point).
  * Передача null в качестве любого из аргументов влечет возбуждение NullPointerException. При попытке создать отрезок
  * на базе двух одинаковых бесконечностей возбуждается исключение IntervalException. Создание отрезка на базе плюс- и
  * минус- бесконечностей допустимо, два таких отрезка считаются равными.
@@ -46,11 +46,11 @@ public class Interval {
     }
 
     public static Interval between(Point limit, Point anotherLimit) {
-        return newInstance(limit, anotherLimit);
+        return new Interval(limit, anotherLimit);
     }
 
     public static Interval newInstance(Point limit, Point anotherLimit) {
-        return new Interval(limit, anotherLimit);
+        return between(limit, anotherLimit);
     }
 
 
@@ -210,7 +210,7 @@ public class Interval {
 
     public Interval mergeWith(Interval other) {
         if(isNot(this.isOverlapsWith(other))) throw new IntervalException("Ошибка при попытке слить два отрезка, " +
-                "не имеющих наложения друг на друга");
+                "не имеющих наложения друг на друга." + System.lineSeparator() + this + System.lineSeparator() + other);
 
         Point newLesserLimit;
         Point newLargerLimit;
@@ -226,6 +226,38 @@ public class Interval {
         }
 
         return Interval.between(newLesserLimit, newLargerLimit);
+    }
+
+    public Interval getSuperposition(Interval other) {
+        if(isNot(this.isOverlapsWith(other))) throw new IntervalException("Ошибка при попытке получить суперпозицию " +
+                "двух отрезков, не имеющих наложения друг на друга." + System.lineSeparator() + this +
+                System.lineSeparator() + other);
+
+        Point newLesserLimit;
+        Point newLargerLimit;
+        if(this.lesserLimit().lessThenOrEquals(other.lesserLimit())) {
+            newLesserLimit = other.lesserLimit();
+        } else {
+            newLesserLimit = this.lesserLimit();
+        }
+        if(this.largerLimit().moreThenOrEquals(other.largerLimit())) {
+            newLargerLimit = other.largerLimit();
+        } else {
+            newLargerLimit = this.largerLimit();
+        }
+
+        return Interval.between(newLesserLimit, newLargerLimit);
+    }
+
+    public Set<Interval> getSuperposition(Subset subset) {
+        if (subset == Subset.EMPTY) return Collections.emptySet();
+        List<Interval> resultList = new LinkedList<>();
+        for(Interval other : subset.getIntervals()) {
+            if(isOverlapsWith(other)) resultList.add(getSuperposition(other));
+        }
+        Set<Interval> resultSet = new HashSet<>(resultList.size()+1, 1.0f);
+        resultSet.addAll(resultList);
+        return resultSet;
     }
 
 

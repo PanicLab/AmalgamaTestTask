@@ -30,9 +30,9 @@ public class SubsetTest {
         Interval intervalThree = Interval.between(x3, y3);
 
         Subset subset = Subset.builder()
-                                .addInterval(intervalOne)
-                                .addInterval(intervalTwo)
-                                .addInterval(intervalThree)
+                                .add(intervalOne)
+                                .add(intervalTwo)
+                                .add(intervalThree)
                                 .create();
         System.out.println("Тест класса Subset - добавлены три не перекрывающихся отрезка. Результат:");
         System.out.println(subset.toString());
@@ -48,7 +48,7 @@ public class SubsetTest {
         Interval intervalTwo = Interval.between(x2, y2);
 
         Subset subset = Subset.builder()
-                                .addInterval(intervalTwo)
+                                .add(intervalTwo)
                                 .create();
         System.out.println("Тест класса Subset - добавлен один не бесконечный отрезок. Результат:");
         System.out.println(subset.toString());
@@ -72,9 +72,9 @@ public class SubsetTest {
         Interval intervalThree = Interval.between(x3, y3);
 
         Subset subset = Subset.builder()
-                .addInterval(intervalOne)
-                .addInterval(intervalTwo)
-                .addInterval(intervalThree)
+                .add(intervalOne)
+                .add(intervalTwo)
+                .add(intervalThree)
                 .create();
         System.out.println("Тест класса Subset - добавлены три случайных отрезка нулевой длины. Результат:");
         System.out.println(subset.toString());
@@ -103,10 +103,10 @@ public class SubsetTest {
         Interval intervalFour = Interval.between(x4, y4);
 
         Subset subset = Subset.builder(Subset.Mode.NORMALIZE)
-                .addInterval(intervalOne)
-                .addInterval(intervalTwo)
-                .addInterval(intervalThree)
-                .addInterval(intervalFour)
+                .add(intervalOne)
+                .add(intervalTwo)
+                .add(intervalThree)
+                .add(intervalFour)
                 .create();
         System.out.println("Тест класса Subset - добавлены четыре случайных отрезка, два из которых перекрываются. " +
                 "Результат:");
@@ -136,10 +136,10 @@ public class SubsetTest {
         Interval intervalFour = Interval.between(x4, y4);
 
         Subset subset = Subset.builder()
-                .addInterval(intervalOne)
-                .addInterval(intervalTwo)
-                .addInterval(intervalThree)
-                .addInterval(intervalFour)
+                .add(intervalOne)
+                .add(intervalTwo)
+                .add(intervalThree)
+                .add(intervalFour)
                 .create();
     }
 
@@ -162,10 +162,10 @@ public class SubsetTest {
             Interval intervalFour = Interval.between(x4, y4);
 
             Subset subset = Subset.builder(Subset.Mode.NORMALIZE)
-                    .addInterval(intervalOne)
-                    .addInterval(intervalTwo)
-                    .addInterval(intervalThree)
-                    .addInterval(intervalFour)
+                    .add(intervalOne)
+                    .add(intervalTwo)
+                    .add(intervalThree)
+                    .add(intervalFour)
                     .create();
 
         System.out.println("Тест класса Subset - добавлены четыре случайных отрезка, и все перекрываются. " +
@@ -199,11 +199,11 @@ public class SubsetTest {
         Interval intervalFive = Interval.between(x5, y5);
 
         Subset subset = Subset.builder(Subset.Mode.NORMALIZE)
-                .addInterval(intervalOne)
-                .addInterval(intervalTwo)
-                .addInterval(intervalThree)
-                .addInterval(intervalFour)
-                .addInterval(intervalFive)
+                .add(intervalOne)
+                .add(intervalTwo)
+                .add(intervalThree)
+                .add(intervalFour)
+                .add(intervalFive)
                 .create();
 
         System.out.println("Тест класса Subset - добавлены пять случайных отрезков, и один вмещает в себя другие два. "
@@ -238,11 +238,11 @@ public class SubsetTest {
         Interval intervalFive = Interval.between(x5, y5);
 
         Subset subset = Subset.builder()
-                .addInterval(intervalOne)
-                .addInterval(intervalTwo)
-                .addInterval(intervalThree)
-                .addInterval(intervalFour)
-                .addInterval(intervalFive)
+                .add(intervalOne)
+                .add(intervalTwo)
+                .add(intervalThree)
+                .add(intervalFour)
+                .add(intervalFive)
                 .create();
     }
 
@@ -270,11 +270,11 @@ public class SubsetTest {
         Interval intervalFive = Interval.between(x5, y5);
 
         Subset subset = Subset.builder(Subset.Mode.NORMALIZE)
-                .addInterval(intervalOne)
-                .addInterval(intervalTwo)
-                .addInterval(intervalThree)
-                .addInterval(intervalFour)
-                .addInterval(intervalFive)
+                .add(intervalOne)
+                .add(intervalTwo)
+                .add(intervalThree)
+                .add(intervalFour)
+                .add(intervalFive)
                 .create();
 
         System.out.println("Тест класса Subset - добавлены пять случайных отрезков, и один вмещает в себя другие два и " +
@@ -309,11 +309,11 @@ public class SubsetTest {
         Interval intervalFive = Interval.between(x5, y5);
 
         Subset subset = Subset.builder()
-                .addInterval(intervalOne)
-                .addInterval(intervalTwo)
-                .addInterval(intervalThree)
-                .addInterval(intervalFour)
-                .addInterval(intervalFive)
+                .add(intervalOne)
+                .add(intervalTwo)
+                .add(intervalThree)
+                .add(intervalFour)
+                .add(intervalFive)
                 .create();
     }
 
@@ -332,9 +332,9 @@ public class SubsetTest {
         Interval intervalThree = Interval.between(x3, y3);
 
         Subset subset = Subset.builder(Subset.Mode.NORMALIZE)
-                .addInterval(intervalOne)
-                .addInterval(intervalTwo)
-                .addInterval(intervalThree)
+                .add(intervalOne)
+                .add(intervalTwo)
+                .add(intervalThree)
                 .create();
         System.out.println("Тест класса Subset - добавлены три случайных отрезка, из них два прилегают друг к другу." +
                 " Результат:");
@@ -357,7 +357,7 @@ public class SubsetTest {
         Interval intervalOne = Interval.between(x1, y1);
 
         Subset subset = Subset.builder(Subset.Mode.NORMALIZE)
-                                .addInterval(intervalOne)
+                                .add(intervalOne)
                                 .create();
 
         assertTrue(subset.isNotEmpty());
@@ -378,7 +378,7 @@ public class SubsetTest {
         Interval intervalOne = Interval.between(x1, y1);
 
         Subset subset = Subset.builder(Subset.Mode.NORMALIZE)
-                .addInterval(intervalOne)
+                .add(intervalOne)
                 .create();
 
         Point specifiedPoint = Point.valueOf(99);
@@ -394,7 +394,7 @@ public class SubsetTest {
         Interval intervalOne = Interval.between(x1, y1);
 
         Subset subset = Subset.builder(Subset.Mode.NORMALIZE)
-                .addInterval(intervalOne)
+                .add(intervalOne)
                 .create();
 
         Point specifiedPoint = Point.valueOf(105);
@@ -411,7 +411,7 @@ public class SubsetTest {
         Interval intervalOne = Interval.between(x1, y1);
 
         Subset subset = Subset.builder(Subset.Mode.NORMALIZE)
-                .addInterval(intervalOne)
+                .add(intervalOne)
                 .create();
 
         Point specifiedPoint = Point.NEGATIVE_INFINITY;
@@ -428,7 +428,7 @@ public class SubsetTest {
         Interval intervalOne = Interval.between(x1, y1);
 
         Subset subset = Subset.builder(Subset.Mode.NORMALIZE)
-                .addInterval(intervalOne)
+                .add(intervalOne)
                 .create();
 
         Point specifiedPoint = Point.POSITIVE_INFINITY;
@@ -448,8 +448,8 @@ public class SubsetTest {
         Interval intervalTwo = Interval.between(x2, y2);
 
         Subset subset = Subset.builder(Subset.Mode.NORMALIZE)
-                .addInterval(intervalOne)
-                .addInterval(intervalTwo)
+                .add(intervalOne)
+                .add(intervalTwo)
                 .create();
 
         Point specifiedPoint = Point.valueOf(1);
@@ -470,8 +470,8 @@ public class SubsetTest {
         Interval intervalTwo = Interval.between(x2, y2);
 
         Subset subset = Subset.builder(Subset.Mode.NORMALIZE)
-                .addInterval(intervalOne)
-                .addInterval(intervalTwo)
+                .add(intervalOne)
+                .add(intervalTwo)
                 .create();
 
         Point specifiedPoint = Point.valueOf(-1010);
