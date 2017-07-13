@@ -49,6 +49,24 @@ public class Interval {
         return new Interval(limit, anotherLimit);
     }
 
+    public static Interval between(Number limit, Number anotherLimit) {
+        Point x = Point.valueOf(limit);
+        Point y = Point.valueOf(anotherLimit);
+        return between(x, y);
+    }
+
+    public static Interval between(String limit, String anotherLimit) {
+        Point x = Point.valueOf(limit);
+        Point y = Point.valueOf(anotherLimit);
+        return between(x, y);
+    }
+
+    public static Interval between(BigDecimal limit, BigDecimal anotherLimit) {
+        Point x = Point.valueOf(limit);
+        Point y = Point.valueOf(anotherLimit);
+        return between(x, y);
+    }
+
     public static Interval newInstance(Point limit, Point anotherLimit) {
         return between(limit, anotherLimit);
     }
