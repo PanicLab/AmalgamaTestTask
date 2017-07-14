@@ -6,7 +6,34 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Created by Сергей on 12.07.2017.
+ * Класс, инкапсулирующий в себе алгоритм пересечения нескольких подмножеств. Экземпляр создается методом статической
+ * генерации:
+ *
+ *                                  createFrom(List<Subset> subsetList);
+ *
+ * Другой способ создания экземпляра - при помощи статического метода builder(), возвращающего экземпляр внутреннего
+ * класса Superposition.Builder, при помощи которого создается экземпляр:
+ *
+ *                              Superposition resolver = Superposition.builder()
+ *                                                                      .add(subset_1)
+ *                                                                      .add(subset_2)
+ *                                                                      .add(subset_3)
+ *                                                                      .build();
+ *
+ * Создание экземпляра - недорогая операция. Расчёт пересечения подмножеств производится методом resolve(),
+ * возвращающего объект типа Subset. Последующий вызов метода не приводит к новым вычислениям, а просто возвращает
+ * расчитанный ранее результат. Узнать состояние экземпляра можно при помощи метода isResolved(), если это необходимо.
+ * Методы класса не синхронизированы, доступ к методам экземпляра в многопоточной среде должен синхронизироваться извне.
+ *
+ * Итоговый результат получается следующим образом:
+ *
+ *                              List<Interval> intervals = Superposition.builder()
+ *                                                                          .add(subset_1)
+ *                                                                          .add(subset_2)
+ *                                                                          .add(subset_3)
+ *                                                                          .build()
+ *                                                                          .resolve()
+ *                                                                          .getIntervalList();
  */
 public class Superposition {
     private List<Subset> subsetList;
@@ -55,6 +82,11 @@ public class Superposition {
 
         isAlreadyResolved = true;
         return builder.create();
+    }
+
+
+    public boolean isResolved() {
+        return isAlreadyResolved;
     }
 
 
