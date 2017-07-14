@@ -1,6 +1,5 @@
 package com.paniclab.amalgama;
 
-import javax.naming.OperationNotSupportedException;
 import java.math.BigDecimal;
 import java.util.Objects;
 
@@ -8,10 +7,24 @@ import static com.paniclab.amalgama.Util.isNot;
 
 /**
  * Абстракция, представляющая точку на плоскости координат.
- * Плюс и минус бесконечности, а также точка "ноль" представлены специальными константами. Согласно контракта, точка
- * "плюс бесконечность" всегда больше любой другой точки, точка "минус бесконечность" всегда меньше любой другой точки.
- * Две плюс бесконечности или две минус бесконечности равны между собой.
- * Попытка зывать метод value() для бесконечной точки приводит к возбуждению исключения PointException.
+ * Плюс и минус бесконечности, а также точка "ноль" представлены специальными константами.
+ *
+ *              Point.NEGATIVE_INFINITY;
+ *              Point.POSITIVE_INFINITY;
+ *              Point.ZERO;
+ *
+ * Согласно контракта, точка "плюс бесконечность" всегда больше любой другой точки, точка "минус бесконечность" всегда
+ * меньше любой другой точки. Две плюс бесконечности или две минус бесконечности равны между собой.
+ * Попытка вызвать методы value() и absValue() для бесконечной точки приводит к возбуждению исключения PointException.
+ * Экземпляр класса создается одним из методов статической генерации:
+ *
+ *              Point.valueOf(String str);
+ *              Point.valueOf(Number number);
+ *              Point.valueOf(BigDecimal bd);
+ *
+ * Класс реализует интерфейс Comparable<Point>, так что его экземпляры обладают свойством natural ordering.
+ * Первый из них бросает в runtime исключение PointException в случае, если не удается интерпретировать строку.
+ * Названия методов класса говорят сами за себя, и их назначение интуитивно понятно.
  * Экземпляры класса неизменяемы, их использование в многопоточной среде безопасно.
  */
 public class Point implements Valuable<BigDecimal>, Comparable<Point> {
@@ -33,7 +46,7 @@ public class Point implements Valuable<BigDecimal>, Comparable<Point> {
             value = new BigDecimal(str);
         } catch (NumberFormatException ex) {
             throw new PointException("Ощибка при создании объекта Point - не удалось интерпретировать вводимые " +
-                    "данные.", ex);
+                    "данные." + System.lineSeparator() + "Ошибочный аргумент: " + str, ex);
         }
     }
 
@@ -57,7 +70,8 @@ public class Point implements Valuable<BigDecimal>, Comparable<Point> {
 
     @Override
     public BigDecimal value() {
-        if(this.isInfinity()) throw new PointException("Попытка получить значение координаты бесконечности");
+        if(this.isInfinity()) throw new PointException("Попытка получить значение координаты бесконечности." +
+        System.lineSeparator() + this);
         return value;
     }
 
@@ -106,7 +120,7 @@ public class Point implements Valuable<BigDecimal>, Comparable<Point> {
      * Метод определяет, находится ли точка в пределах заданного отрезка, возвращая true в этом случае. Если точка равна
      * одной из границ отрезка, метод возвращает true.
     */
-    public boolean isBelongsTo(Interval interval) {
+    public boolean isIn(Interval interval) {
         if(this.lessThen(interval.lesserLimit())) return false;
         if(this.moreThen(interval.largerLimit())) return false;
         return true;
@@ -142,7 +156,7 @@ public class Point implements Valuable<BigDecimal>, Comparable<Point> {
     @Override
     public String toString() {
         if (isInfinity()) {
-            return "Объект Point: value = " + infinityFlag;
+            return "Объект Point: value = " + infinityFlag + "_INFINITY";
         }
         return "Объект Point: value = " + value();
     }

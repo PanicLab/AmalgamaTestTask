@@ -192,7 +192,7 @@ public class Interval {
     }
 
     public boolean isContains(Point point) {
-        return point.isBelongsTo(this);
+        return point.isIn(this);
     }
 
     public boolean isContains(Interval another) {
@@ -202,10 +202,10 @@ public class Interval {
     }
 
     public boolean isOverlapsWith(Interval another) {
-        return this.lesserLimit().isBelongsTo(another) ||
-                this.largerLimit().isBelongsTo(another) ||
-                another.lesserLimit().isBelongsTo(this) ||
-                another.largerLimit().isBelongsTo(this);
+        return this.lesserLimit().isIn(another) ||
+                this.largerLimit().isIn(another) ||
+                another.lesserLimit().isIn(this) ||
+                another.largerLimit().isIn(this);
     }
 
 

@@ -483,48 +483,48 @@ public class PointTest {
     }
 
     @Test
-    public void isBelongsTo_randomPointAndIntervalWithRandomLimits_pointIsIn_returnTrue() throws Exception {
+    public void isIn_randomPointAndIntervalWithRandomLimits_pointIsIn_returnTrue() throws Exception {
         Point point = Point.valueOf(10);
         Point x = Point.valueOf(-1);
         Point y = Point.valueOf(11);
         Interval interval = Interval.between(x, y);
-        assertTrue(point.isBelongsTo(interval));
+        assertTrue(point.isIn(interval));
     }
 
     @Test
-    public void isBelongsTo_randomPointAndIntervalWithRandomLimits_pointIsOut_returnFalse() throws Exception {
+    public void isIn_randomPointAndIntervalWithRandomLimits_pointIsOut_returnFalse() throws Exception {
         Point point = Point.valueOf(22);
         Point x = Point.valueOf(-1);
         Point y = Point.valueOf(11);
         Interval interval = Interval.between(x, y);
-        assertFalse(point.isBelongsTo(interval));
+        assertFalse(point.isIn(interval));
     }
 
     @Test
-    public void isBelongsTo_randomPointAndIntervalWithRandomLimits_pointEqualsLesserLimit_returnTrue() throws Exception {
+    public void isIn_randomPointAndIntervalWithRandomLimits_pointEqualsLesserLimit_returnTrue() throws Exception {
         Point point = Point.valueOf(-1);
         Point x = Point.valueOf(-1);
         Point y = Point.valueOf(11);
         Interval interval = Interval.between(x, y);
-        assertTrue(point.isBelongsTo(interval));
+        assertTrue(point.isIn(interval));
     }
 
     @Test
-    public void isBelongsTo_randomPointAndIntervalWithRandomLimits_pointEqualsLargerLimit_returnTrue() throws Exception {
+    public void isIn_randomPointAndIntervalWithRandomLimits_pointEqualsLargerLimit_returnTrue() throws Exception {
         Point point = Point.valueOf(11);
         Point x = Point.valueOf(-1);
         Point y = Point.valueOf(11);
         Interval interval = Interval.between(x, y);
-        assertTrue(point.isBelongsTo(interval));
+        assertTrue(point.isIn(interval));
     }
 
     @Test
-    public void isBelongsTo_randomPointAndZeroLengthInterval_pointIsEquals_returnTrue() throws Exception {
+    public void isIn_randomPointAndZeroLengthInterval_pointIsEquals_returnTrue() throws Exception {
         Point point = Point.valueOf(11);
         Point x = Point.valueOf(11);
         Point y = Point.valueOf(11);
         Interval interval = Interval.between(x, y);
-        assertTrue(point.isBelongsTo(interval));
+        assertTrue(point.isIn(interval));
     }
 
     @Test
