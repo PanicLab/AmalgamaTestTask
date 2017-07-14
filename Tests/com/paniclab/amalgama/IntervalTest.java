@@ -25,7 +25,7 @@ public class IntervalTest {
 
     @Test(expected = NullPointerException.class)
     public void createInstance_TakesNullBothArgs_throwNullPointerException() throws Exception {
-        Interval interval = Interval.between(null, null);
+        Interval interval = Interval.between((Number)null, null);
     }
 
     @Test(expected = IntervalException.class)

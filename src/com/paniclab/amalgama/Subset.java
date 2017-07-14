@@ -93,6 +93,21 @@ public class Subset {
         return result.toString();
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(table);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj == null) return false;
+        if(this == obj) return true;
+        if(isNot(this.hashCode() == obj.hashCode())) return false;
+        if(isNot(obj instanceof Subset)) return false;
+        Subset other = Subset.class.cast(obj);
+        return table.equals(other.table);
+    }
+
     public static class Builder {
         private NavigableMap<Point, Interval> table = new TreeMap<>();
         private Mode normalizeMode = Mode.THROW;

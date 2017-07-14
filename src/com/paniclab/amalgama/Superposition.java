@@ -11,6 +11,7 @@ import java.util.Set;
 public class Superposition {
     private List<Subset> subsetList;
     private Subset.Builder builder = Subset.builder();
+    private boolean isAlreadyResolved;
 
     private Superposition() {}
 
@@ -33,6 +34,7 @@ public class Superposition {
     }
 
     public Subset resolve() {
+        if (isAlreadyResolved) return builder.create();
         if (subsetList.isEmpty()) return Subset.EMPTY;
         if (subsetList.size() == 1) return subsetList.get(0);
 
@@ -51,6 +53,7 @@ public class Superposition {
             builder = temp;
         }
 
+        isAlreadyResolved = true;
         return builder.create();
     }
 
