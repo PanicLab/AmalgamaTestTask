@@ -41,6 +41,13 @@ public class Subset {
     }
 
 
+    public List<Interval> getIntervalList() {
+        List<Interval> result = new ArrayList<>(getIntervals().size());
+        result.addAll(getIntervals());
+        return result;
+    }
+
+
     public Set<Point> getPoints() {
         return pointSet;
     }
