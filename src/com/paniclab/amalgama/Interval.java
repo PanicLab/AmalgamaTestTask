@@ -7,20 +7,50 @@ import static com.paniclab.amalgama.Util.isNot;
 
 /**
  * Created by Сергей on 04.07.2017.
- * Класс представляет собой абстракцию одного из отрезков подмножества.
+ * Класс представляет собой абстракцию одного из отрезков/полуинтервалов подмножества.
  * Экземпляр класса создается методами статической генерации:
+ *
  *                  between(Point, Point);
  *                  newInstance(Point, Point);
- * Последний за кулисами просто вызывает between(Point, Point).
+ *
+ * Последний за кулисами просто вызывает between(Point, Point). Кроме указанных, класс предоставляет другие, более
+ * удобные, методы статической генерации:
+ *
+ *                  between(Number limit, Number anotherLimit);
+ *                  between(String limit, String anotherLimit);
+ *                  between(BigDecimal limit, BigDecimal anotherLimit);
+ *
  * Передача null в качестве любого из аргументов влечет возбуждение NullPointerException. При попытке создать отрезок
  * на базе двух одинаковых бесконечностей возбуждается исключение IntervalException. Создание отрезка на базе плюс- и
  * минус- бесконечностей допустимо, два таких отрезка считаются равными.
- * В случае правильно построенного отрезка метод getLimits() возвращает неизменяемый экземпляр Set, состоящий из двух
- * экземпляров класса Point. В случае отрезка нулевой длины метод возвращает Set, состоящий из одного экземпляра класса
- * Point.
+ * Метод getLimits() возвращает множество, состоящее из границ отрезка/полуинтервала. В случае правильно построенного
+ * отрезка метод getLimits() возвращает неизменяемый объект типа Set, состоящий из двух экземпляров класса Point. В
+ * случае отрезка нулевой длины метод возвращает неизменяемый объект типа Set, состоящий из одного экземпляра класса
+ * Point. Меньшую границу отрезка можно получить вызовом метода lesserLimit(), большую - вызовом метода largerLimit().
+ * Отношения между двумя экземплярами класса описываются следующими методами:
+ *
+ *      - isIncludedBy(Interval other)
+ *      - isContains(Interval another)
+ *      - isNeighborsWith(Interval another)
+ *      - isOverlapsWith(Interval another)
+ *
+ * Поведение первых двух проистекает из их названия. Метод isNeighborsWith(Interval another) возвращает true в случае,
+ * если два отрезка примыкают друг к другу (имеют общую границу). Метод вернет false, если два отрезка содержат один
+ * другой, даже если у них есть общая граница. Метод isOverlapsWith(Interval another) возвращает true, если либо два
+ * отрезка содержат один другой, либо они накладываются друг на друга (имеют общий участок), либо примыкают друг к
+ * другу - метод возвращает true также в случае, если метод isNeighborsWith(Interval another) возвращает true.
+ * Если метод isOverlapsWith(Interval another) возвращает true, то два отрезка можно объединить в один, вызвав метод
+ * mergeWith(Interval other). Метод возвращает новый экземпляр класса. В случае, если отрезки не перекрываются, вызов
+ * метода бросит в runtime исключение IntervalException.
+ * Метод getSuperposition(Interval other) возвращает общий отрезок двух накладывающихся друг на друга отрезков или
+ * полуинтервалов в виде нового экземпляра класса. В случае,  если отрезки не перекрываются, вызов метода бросит в
+ * runtime исключение IntervalException.
+ * Метод getSuperposition(Subset subset) возвращает объект типа Set<Interval> или пустое множество, если пересечения
+ * между отрезком и подмножеством не существует.
+ * Метод isContains(Point point) позволяет определить принадлежность точки к данному отрезку или полуинтвервалу,
+ * включая границы отрезка или полуинтервала.
+ * Назначение других методов класса понятно из их названия.
  * Экземпляры класса неизменяемы, их использование в многопоточной среде безопасно.
- * Метод IsOverlapsWith() возвращает true, если два отрезка содержат один другой, примыкают друг к другу или
- * накладываются один на другой.
  */
 public class Interval {
     private Point lesserLimit;
@@ -28,8 +58,10 @@ public class Interval {
 
     private Interval(Point limit, Point anotherLimit) {
         if(limit == null || anotherLimit == null) throw new NullPointerException();
-        if(limit.equals(anotherLimit) && anotherLimit.isInfinity()) throw new IntervalException("Ошибка при создании отрезка. " +
-                "Обе точки отрезка равны минус или плюс бесконечность");
+        if(limit.equals(anotherLimit) && anotherLimit.isInfinity()) throw new IntervalException("Ошибка при создании " +
+                "отрезка или полуинтервала. Обе точки отрезка равны минус или плюс бесконечность" +
+                System.lineSeparator() + "limit = " + limit + System.lineSeparator() + "anotherLimit = " +
+                anotherLimit);
 
         if(limit.compareTo(anotherLimit) < 0) {
             this.lesserLimit = limit;
@@ -96,82 +128,6 @@ public class Interval {
 
     public boolean isPositiveHalfInterval() {
         return this.isHalfInterval() && this.largerLimit().isInfinity();
-    }
-
-
-    //TODO тесты
-    public boolean isBiggerThen(Interval other) {
-        if(this.hasInfiniteLength() && other.hasInfiniteLength()) return false;
-        if(this.hasInfiniteLength() && isNot(other.hasInfiniteLength())) return true;
-        if(other.hasInfiniteLength() && isNot(this.hasInfiniteLength())) return false;
-
-        if(isNot(this.isHalfInterval()) && isNot(other.isHalfInterval())) {
-            return this.length().compareTo(other.length()) > 0;
-        }
-
-        if(this.isHalfInterval() && isNot(other.isHalfInterval())) return true;
-        if(isNot(this.isHalfInterval() && other.isHalfInterval())) return false;
-
-        if(this.isHalfInterval() && other.isHalfInterval()) {
-            if(this.isNegativeHalfInterval() && other.isNegativeHalfInterval()) {
-                return this.largerLimit().moreThen(other.largerLimit());
-            }
-            if(this.isPositiveHalfInterval() && other.isPositiveHalfInterval()) {
-                return this.lesserLimit().lessThen(other.lesserLimit());
-            }
-
-            if(this.isNegativeHalfInterval() && other.isPositiveHalfInterval()) {
-                if(this.largerLimit().equals(Point.ZERO) && other.lesserLimit().equals(Point.ZERO)) {
-                    return false;
-                }
-                if(this.largerLimit().lessThen(Point.ZERO) && other.lesserLimit().moreThen(Point.ZERO)) {
-                    return this.largerLimit().absValue().compareTo(other.lesserLimit().value()) < 0;
-                }
-                if(this.largerLimit().moreThenOrEquals(Point.ZERO) && other.lesserLimit().moreThen(Point.ZERO)) {
-                    return true;
-                }
-                if(this.largerLimit().lessThen(Point.ZERO) && other.lesserLimit().lessThenOrEquals(Point.ZERO)) {
-                    return false;
-                }
-                if(this.largerLimit().moreThen(Point.ZERO) && other.lesserLimit().lessThen(Point.ZERO)) {
-                    return this.largerLimit().value().compareTo(other.lesserLimit().absValue()) > 0;
-                }
-            }
-
-            if(other.isNegativeHalfInterval() && this.isPositiveHalfInterval()) {
-                if(other.largerLimit().equals(Point.ZERO) && this.lesserLimit().equals(Point.ZERO)) {
-                    return false;
-                }
-                if(other.largerLimit().lessThen(Point.ZERO) && this.lesserLimit().moreThen(Point.ZERO)) {
-                    return other.largerLimit().absValue().compareTo(this.lesserLimit().value()) < 0;
-                }
-                if(other.largerLimit().moreThenOrEquals(Point.ZERO) && this.lesserLimit().moreThen(Point.ZERO)) {
-                    return false;
-                }
-                if(other.largerLimit().lessThen(Point.ZERO) && this.lesserLimit().lessThenOrEquals(Point.ZERO)) {
-                    return true;
-                }
-                if(other.largerLimit().moreThen(Point.ZERO) && this.lesserLimit().lessThen(Point.ZERO)) {
-                    return other.largerLimit().value().compareTo(this.lesserLimit().absValue()) < 0;
-                }
-            }
-        }
-
-        throw new InternalError("Попытка сравнения двух интервалов не удалась из-за внутренней ошибки. Обратитесь к " +
-                "разработчику");
-    }
-
-
-    //TODO
-    public boolean isSmallerThen(Interval other) {
-        return this.length().compareTo(other.length()) < 0;
-    }
-
-    private BigDecimal length() {
-        if(this.hasInfiniteLength() || this.isHalfInterval()) throw new IntervalException("Ошибка при попытке " +
-                "определения длины бесконечного отрезка или полуинтервала");
-
-        return largerLimit().value().subtract(lesserLimit().value());
     }
 
 
