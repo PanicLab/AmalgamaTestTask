@@ -5,13 +5,13 @@ import java.util.*;
 /**
  * Created by Сергей on 04.07.2017.
  */
-public final class Util {
-    public static boolean isNot(boolean b) {
+final class Util {
+    static boolean isNot(boolean b) {
         return !b;
     }
 
 
-    public static Interval getSuperpositionOf(Interval first, Interval second) {
+    static Interval getSuperpositionOf(Interval first, Interval second) {
         if(isNot(first.isOverlapsWith(second))) return null;
         if(first.equals(second)) return first;
 
@@ -48,8 +48,8 @@ public final class Util {
     }
 
 
-    public static <T extends Comparable<T>> Collection<T> getMinAndMaxElementsOf(Collection<T> collection) {
-        if(collection.isEmpty()) return null;
+    static <T extends Comparable<T>> Collection<T> getMinAndMaxElementsOf(Collection<T> collection) {
+        if(collection.isEmpty()) return collection;
         T min = null;
         T max = null;
         Iterator<T> iterator = collection.iterator();

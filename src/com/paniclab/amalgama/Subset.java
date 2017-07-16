@@ -54,18 +54,16 @@ public class Subset {
     public static final Subset EMPTY = new Subset();
     private NavigableMap<Point, Interval> table;
     private Set<Interval> intervalSet;
-    private Set<Point> pointSet;
+
 
     private Subset() {
         this.table = Collections.emptyNavigableMap();
         this.intervalSet = Collections.emptySet();
-        this.pointSet = Collections.emptySet();
     }
 
     private Subset(Builder builder) {
         this.table = Collections.unmodifiableNavigableMap(builder.table);
         this.intervalSet = Collections.unmodifiableSet(new HashSet<>(table.values()));
-        this.pointSet = Collections.unmodifiableNavigableSet(table.navigableKeySet());
     }
 
 
@@ -91,7 +89,7 @@ public class Subset {
 
 
     public Set<Point> getPoints() {
-        return pointSet;
+        return Collections.unmodifiableNavigableSet(table.navigableKeySet());
     }
 
     public int size() {
@@ -102,7 +100,21 @@ public class Subset {
         return this != EMPTY;
     }
 
+
     public Point getNearestOrElse(Point specifiedPoint) {
+/*      Код метода базируется на контракте класса Subset, согласно которому подмножество состоит из некоторого числа
+        отрезков и/или полуинтервалов, которые НЕ ПЕРЕКРЫВАЮТСЯ. Внутренние данные класса хранятся в поле типа
+        NavigableMap, в котором значениями (value) являются интервалы, а ключами (key) - точки, ограничивающие эти
+        отрезки (точки представлены классом Point, реализующим интерфейс Comparable). Таким образом, мы имеем полный
+        набор отрезков и точек всего подмножества, увязанных в единую структуру. Всё, что нам нужно, это выполнить две
+        дорогостоящие операции - найти точки, ближайшие к заданной точке, слева и справа (в нашем случае - log(N)).
+        Далее, находим отрезок, соответствующий точке слева - O(1) - и проверяем принадлежность заданной точки к этому
+        отрезку O(1). Возвращаем заданную точку, если тест выдал положительный результат. Если нет - точка лежит в
+        пустоте между отрезками. Тогда строим два гипотетических отрезка "крайняя точка - заданная точка" - O(1), и на
+        основании их длин выбираем точку из двух крайних, ближайшую к заданной - O(1). Не забываем при этом обработать
+        особые случаи, связанные с полуинтервалами O(1).
+*/
+
         if(this == EMPTY) {
             StringBuilder sb = new StringBuilder();
             sb.append("Попытка обращения к пустому подмножеству").append(System.lineSeparator());
@@ -119,7 +131,10 @@ public class Subset {
         }
         nearestRight = table.higherKey(specifiedPoint);
         if(isNot(nearestRight == null)) {
-            if (table.get(nearestRight).isContains(specifiedPoint)) return specifiedPoint;
+            /*для точки справа такую проверку делать не нужно. Согласно контракта класса, интервалы не перекрываются.
+            Так что, если уж мы не попали в отрезок в случае с левой точкой, значит мы попали в пустоту между отрезками
+             */
+            //if (table.get(nearestRight).isContains(specifiedPoint)) return specifiedPoint;
             if (nearestLeft == null) return nearestRight;
         }
         if(isNot(nearestLeft == null) && nearestRight == null) return nearestLeft;
