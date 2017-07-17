@@ -53,8 +53,8 @@ import static com.paniclab.amalgama.Util.isNot;
  * Экземпляры класса неизменяемы, их использование в многопоточной среде безопасно.
  */
 public class Interval {
-    private Point lesserLimit;
-    private Point largerLimit;
+    private final Point lesserLimit;
+    private final Point largerLimit;
 
     private Interval(Point limit, Point anotherLimit) {
         if(limit == null || anotherLimit == null) throw new NullPointerException();
@@ -63,18 +63,22 @@ public class Interval {
                 System.lineSeparator() + "limit = " + limit + System.lineSeparator() + "anotherLimit = " +
                 anotherLimit);
 
+        Point min = null, max = null;
         if(limit.compareTo(anotherLimit) < 0) {
-            this.lesserLimit = limit;
-            this.largerLimit = anotherLimit;
+            min = limit;
+            max = anotherLimit;
         }
         if(limit.compareTo(anotherLimit) > 0) {
-            this.lesserLimit = anotherLimit;
-            this.largerLimit = limit;
+            min = anotherLimit;
+            max = limit;
         }
         if(limit.compareTo(anotherLimit) == 0) {
-            this.lesserLimit = limit;
-            this.largerLimit = limit;
+            min = limit;
+            max = limit;
         }
+
+        lesserLimit = min;
+        largerLimit = max;
     }
 
     public static Interval between(Point limit, Point anotherLimit) {
