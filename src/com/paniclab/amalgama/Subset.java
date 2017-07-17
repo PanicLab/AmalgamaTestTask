@@ -52,8 +52,8 @@ import static com.paniclab.amalgama.Util.isNot;
  */
 public class Subset {
     public static final Subset EMPTY = new Subset();
-    private NavigableMap<Point, Interval> table;
-    private Set<Interval> intervalSet;
+    private final NavigableMap<Point, Interval> table;
+    private final Set<Interval> intervalSet;
 
 
     private Subset() {
@@ -64,6 +64,7 @@ public class Subset {
     private Subset(Builder builder) {
         this.table = Collections.unmodifiableNavigableMap(builder.table);
         this.intervalSet = Collections.unmodifiableSet(new HashSet<>(table.values()));
+        builder.table = null;
     }
 
 

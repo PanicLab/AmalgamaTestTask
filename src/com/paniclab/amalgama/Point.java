@@ -33,8 +33,8 @@ public class Point implements Comparable<Point> {
     public static final Point NEGATIVE_INFINITY = new Point(INFINITY.NEGATIVE);
     public static final Point ZERO = valueOf(0);
 
-    private BigDecimal value;
-    private INFINITY infinityFlag = null;
+    private final BigDecimal value;
+    private final INFINITY infinityFlag;
 
     private Point(INFINITY status) {
         this.value = BigDecimal.ZERO;
@@ -48,10 +48,12 @@ public class Point implements Comparable<Point> {
             throw new PointException("Ощибка при создании объекта Point - не удалось интерпретировать вводимые " +
                     "данные." + System.lineSeparator() + "Ошибочный аргумент: " + str, ex);
         }
+        infinityFlag = null;
     }
 
     private Point(BigDecimal val) {
         this.value = val;
+        infinityFlag = null;
     }
 
 
