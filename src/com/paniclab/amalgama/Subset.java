@@ -64,7 +64,6 @@ public class Subset {
     private Subset(Builder builder) {
         this.table = Collections.unmodifiableNavigableMap(builder.table);
         this.intervalSet = Collections.unmodifiableSet(new HashSet<>(table.values()));
-        builder.table = null;
     }
 
 
