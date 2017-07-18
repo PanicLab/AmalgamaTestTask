@@ -52,7 +52,7 @@ import static com.paniclab.amalgama.Util.isNot;
  * Назначение других методов класса понятно из их названия.
  * Экземпляры класса неизменяемы, их использование в многопоточной среде безопасно.
  */
-public class Interval {
+public final class Interval {
     private final Point lesserLimit;
     private final Point largerLimit;
 

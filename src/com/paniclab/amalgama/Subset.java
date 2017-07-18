@@ -50,7 +50,7 @@ import static com.paniclab.amalgama.Util.isNot;
  * возбуждение исключения UnsupportedOperationException.
  * Экземпляр класса неизменяемы, и их использование в многопоточно среде безопасно.
  */
-public class Subset {
+public final class Subset {
     public static final Subset EMPTY = new Subset();
     private final NavigableMap<Point, Interval> table;
     private final Set<Interval> intervalSet;

@@ -27,7 +27,7 @@ import static com.paniclab.amalgama.Util.isNot;
  * Названия методов класса говорят сами за себя, и их назначение интуитивно понятно.
  * Экземпляры класса неизменяемы, их использование в многопоточной среде безопасно.
  */
-public class Point implements Comparable<Point> {
+public final class Point implements Comparable<Point> {
 
     public static final Point POSITIVE_INFINITY = new Point(INFINITY.POSITIVE);
     public static final Point NEGATIVE_INFINITY = new Point(INFINITY.NEGATIVE);
