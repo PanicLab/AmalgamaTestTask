@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import static com.paniclab.amalgama.Util.isNot;
+
 /**
  * Класс, инкапсулирующий в себе алгоритм пересечения нескольких подмножеств. Экземпляр создается методом статической
  * генерации:
@@ -37,8 +39,7 @@ import java.util.Set;
  */
 public class Superposition {
     private List<Subset> subsetList;
-    private Subset.Builder builder = Subset.builder();
-    private boolean isAlreadyResolved;
+    private Subset result = null;
 
     private Superposition() {}
 
@@ -60,33 +61,35 @@ public class Superposition {
         return new Builder();
     }
 
+
     public Subset resolve() {
-        if (isAlreadyResolved) return builder.create();
+        if (isResolved()) return result;
         if (subsetList.isEmpty()) return Subset.EMPTY;
         if (subsetList.size() == 1) return subsetList.get(0);
 
+        Subset.Builder subsetBuilder = Subset.builder();
         for (Interval interval : subsetList.get(0).getIntervals()) {
-            builder.add(interval);
+            subsetBuilder.add(interval);
         }
 
         for(int i = 1; i < subsetList.size(); i++) {
             Subset currentSubset = subsetList.get(i);
 
             Subset.Builder temp = Subset.builder();
-            for (Interval interval : builder.getIntervals()) {
+            for (Interval interval : subsetBuilder.getIntervals()) {
                 Set<Interval> newSuperposition = interval.getSuperposition(currentSubset);
                 temp.add(newSuperposition);
             }
-            builder = temp;
+            subsetBuilder = temp;
         }
 
-        isAlreadyResolved = true;
-        return builder.create();
+        result = subsetBuilder.create();
+        return result;
     }
 
 
     public boolean isResolved() {
-        return isAlreadyResolved;
+        return isNot(result == null);
     }
 
 
